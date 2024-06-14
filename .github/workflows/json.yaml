@@ -1,0 +1,100 @@
+---
+#
+# .github/workflows/json.yaml
+#
+# yamllint disable rule:line-length
+name: json
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+  workflow_dispatch:
+
+env:
+  REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  stage1:
+    name: Change Check
+    runs-on: 'ubuntu-latest'
+    outputs:
+      docs_changed: ${{ steps.check_file_changed.outputs.docs_changed }}
+    steps:
+      - name: Checkout Repo
+        id: checkout-repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+          submodules: recursive
+      - name: Get Change List
+        id: check_file_changed
+        run: |-
+          {
+            # Diff HEAD with the previous commit then output to stdout.
+            printf "=== Which files changed? ===\n"
+            GIT_DIFF="$(git diff --name-only HEAD^ HEAD)"
+            printf "%s\n" "${GIT_DIFF}"
+            printf "\n"
+
+            # Check if the files are present in the changed file list (added, modified, deleted) then output to stdout.
+            HAS_DIFF=false
+            printf "=== Which Json files changed? ===\n"
+            if printf "%s\n" "${GIT_DIFF}" | grep -E '^(.*[.]json|.github/workflows/json.yaml)$'; then
+              HAS_DIFF=true
+            fi
+            printf "\n"
+
+            # Did Json files change?
+            printf "=== Did Json files change? ===\n"
+            printf "%s\n" "${HAS_DIFF}"
+            printf "\n"
+
+            # Set the output named "docs_changed"
+            printf "%s=%s\n" "docs_changed" "${HAS_DIFF}" | tee -a "${GITHUB_OUTPUT}"
+          } | tee -a "${GITHUB_STEP_SUMMARY}"
+  stage2:
+    name: json
+    runs-on: ubuntu-latest
+    needs:
+      - stage1
+    if: needs.stage1.outputs.docs_changed == 'True'
+    steps:
+      - name: Git Checkout
+        id: checkout-repo
+        uses: actions/checkout@v4
+      - name: Install Node
+        id: install-node
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+      - name: Check Node Version
+        id: npm-version-check
+        run: |-
+          npm --version
+      - name: Set up Reviewdog
+        id: setup-reviewdog
+        uses: reviewdog/action-setup@v1
+      - name: Check reviewdog Version
+        id: reviewdog-version-check
+        run: |-
+          reviewdog --version
+      - name: Install jsonlint
+        id: install-jsonlint
+        run: |-
+          npm install -g jsonlint
+          printf "Version: "
+          jsonlint --version || true  # yep, it fails when you query the version
+          printf "\n"
+          jsonlint --help
+      - name: JsonLint with Reviewdog
+        id: run-jsonlint
+        run: |-
+          # ./node_modules/jsonlint/test/fails/10.json:1:33:found: 'STRING' - expected: 'EOF':'}':',':']'.
+          find . -type f -name '*json' -exec jsonlint --compact --quiet {} \; |& sed -r -e 's/ line //g; s/, col /:/g; s/, /: /g' | reviewdog -tee -efm="%f:%l:%c: %m" -name="jsonlint" -reporter=github-check | tee -a "${GITHUB_STEP_SUMMARY}"
