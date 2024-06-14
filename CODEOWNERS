@@ -14,3 +14,4 @@ CHANGELOG.md            @vpayno
 .gitignore              @vpayno
 .yamlfix.yaml           @vpayno
 .yamllint.yaml          @vpayno
+.ansible-lint           @vpayno
