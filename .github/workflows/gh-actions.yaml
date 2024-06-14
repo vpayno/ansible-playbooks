@@ -1,0 +1,106 @@
+---
+#
+# .github/workflows/gh-actions.yaml
+#
+# https://github.com/reviewdog/action-actionlint
+name: actionlint
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  stage1:
+    name: Change Check
+    runs-on: 'ubuntu-latest'
+    outputs:
+      docs_changed: ${{ steps.check_file_changed.outputs.docs_changed }}
+    steps:
+      - name: Checkout Repo
+        id: checkout-repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+          submodules: recursive
+      - name: Get Change List
+        id: check_file_changed
+        run: |-
+          {
+            # Diff HEAD with the previous commit then output to stdout.
+            printf "=== Which files changed? ===\n"
+            GIT_DIFF="$(git diff --name-only HEAD^ HEAD)"
+            printf "%s\n" "${GIT_DIFF}"
+            printf "\n"
+
+            # Check if the files are present in the changed file list (added, modified, deleted) then output to stdout.
+            HAS_DIFF=false
+            printf "=== Which GitHub Actions/Workflows changed? ===\n"
+            if printf "%s\n" "${GIT_DIFF}" | grep -E '^.github/workflows/*.yaml$'; then
+              HAS_DIFF=true
+            fi
+            printf "\n"
+
+            # Did files change?
+            printf "=== Did GitHub Actions/Workflows change? ===\n"
+            printf "%s\n" "${HAS_DIFF}"
+            printf "\n"
+
+            # Set the output named "docs_changed"
+            printf "%s=%s\n" "docs_changed" "${HAS_DIFF}" | tee -a "${GITHUB_OUTPUT}"
+          } | tee -a "${GITHUB_STEP_SUMMARY}"
+  stage2:
+    name: GitHub Action Checks
+    strategy:
+      matrix:
+        os: ["ubuntu-latest"]
+    runs-on: "${{ matrix.os }}"
+    needs:
+      - stage1
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Set up Go (using latest version)
+        uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+      - name: Show Go version
+        run: |
+          go version
+      - name: Install Tools
+        run: |
+          sudo apt install -y shellcheck
+          go install github.com/reviewdog/reviewdog/cmd/reviewdog@latest
+          go install github.com/rhysd/actionlint/cmd/actionlint@latest
+      - name: Reviewdog Version Checks
+        run: |
+          reviewdog --version
+      - name: Actionlint Version Checks
+        run: |
+          {
+            printf "Actionlint Version:\n"
+            actionlint --version
+            printf "\n"
+          } | tee -a "${GITHUB_STEP_SUMMARY}"
+      - name: Analyzing the code with actionlint
+        run: |-
+          echo "::add-matcher::.github/actionlint-matcher.json"
+          for f in ./.github/workflows/*yaml; do
+            {
+                printf "Running: actionlint %s\n" "${f}"
+                tee /tmp/actionlint.out < <(actionlint -oneline "${f}")
+                printf "\n"
+            } | tee -a "${GITHUB_STEP_SUMMARY}"
+            reviewdog -efm="%f:%l:%c: %m" -name="actionlint" -reporter=github-pr-check < /tmp/actionlint.out
+          done
