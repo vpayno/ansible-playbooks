@@ -1,6 +1,7 @@
 # ansible-playbooks
 
 [![actionlint](https://github.com/vpayno/ansible-playbooks/actions/workflows/gh-actions.yaml/badge.svg?branch=main)](https://github.com/vpayno/ansible-playbooks/actions/workflows/gh-actions.yaml)
+[![ansible](https://github.com/vpayno/ansible-playbooks/actions/workflows/ansible.yaml/badge.svg?branch=main)](https://github.com/vpayno/ansible-playbooks/actions/workflows/ansible.yaml)
 [![json](https://github.com/vpayno/ansible-playbooks/actions/workflows/json.yaml/badge.svg?branch=main)](https://github.com/vpayno/ansible-playbooks/actions/workflows/json.yaml)
 [![markdown](https://github.com/vpayno/ansible-playbooks/actions/workflows/markdown.yaml/badge.svg?branch=main)](https://github.com/vpayno/ansible-playbooks/actions/workflows/markdown.yaml)
 [![spellcheck](https://github.com/vpayno/ansible-playbooks/actions/workflows/spellcheck.yaml/badge.svg?branch=main)](https://github.com/vpayno/ansible-playbooks/actions/workflows/spellcheck.yaml)
