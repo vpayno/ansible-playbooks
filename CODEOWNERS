@@ -15,3 +15,4 @@ CHANGELOG.md            @vpayno
 .yamlfix.yaml           @vpayno
 .yamllint.yaml          @vpayno
 .ansible-lint           @vpayno
+.darglint               @vpayno
