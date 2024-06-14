@@ -1,0 +1,14 @@
+# access files
+CODEOWNERS              @vpayno
+
+# CI files
+/.github/               @vpayno
+/.gitlab-ci.yaml        @vpayno
+
+# sensitive documentation
+LICENSE                 @vpayno
+README.md               @vpayno
+CHANGELOG.md            @vpayno
+
+# tool configuration files
+.gitignore              @vpayno
