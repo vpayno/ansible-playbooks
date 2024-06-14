@@ -22,3 +22,4 @@ cliff.toml                   @vpayno
 .commitlint.config.js        @vpayno
 .lycheeignore                @vpayno
 .proselintrc.json            @vpayno
+ansible.cfg                  @vpayno
