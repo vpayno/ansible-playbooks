@@ -17,3 +17,4 @@ CHANGELOG.md              @vpayno
 .ansible-lint             @vpayno
 .darglint                 @vpayno
 .markdownlint.yaml        @vpayno
+cliff.toml                @vpayno
