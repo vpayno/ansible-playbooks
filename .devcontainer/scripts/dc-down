@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+declare devcontainer_id
+
+devcontainer_id="$(docker ps --format 'json' | jq -r '. | select(.Names | contains("ansible-workspace")) | select(.Image == "vpayno/ci-generic-debian:latest") | .ID')"
+
+./.devcontainer/scripts/dc-list
+printf "\n"
+
+# stop old container
+if [[ -n ${devcontainer_id} ]]; then
+	printf "Stopping container...\n"
+	echo Running: docker stop "${devcontainer_id}"
+	docker stop "${devcontainer_id}"
+	printf "done.\n"
+fi
+printf "\n"

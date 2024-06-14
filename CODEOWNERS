@@ -10,6 +10,9 @@ LICENSE                      @vpayno
 README.md                    @vpayno
 CHANGELOG.md                 @vpayno
 
+# dev-containers
+/.devcontainer               @vpayno
+
 # tool configuration files
 .gitignore                   @vpayno
 .yamlfix.yaml                @vpayno

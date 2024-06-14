@@ -1,0 +1,19 @@
+{
+	"name": "ansible-workspace",
+	"image": "vpayno/ci-generic-debian:latest",
+	"customizations": {
+		"vscode": {
+			"settings": {},
+			"extensions": []
+		}
+	},
+	"features": {},
+	"portsAttributes": {},
+	"postCreateCommand": "cd /workspaces/ansible-playbooks/; tree .devcontainer/; ./.devcontainer/scripts/dc-up-post-create-command.sh",
+	"remoteUser": "root",
+	"runArgs": [
+		"--name",
+		"${localEnv:USER}_ansible-workspace"
+	],
+	"shutdownAction": "none"
+}

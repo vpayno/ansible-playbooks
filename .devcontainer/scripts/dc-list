@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+{
+	printf "%s," ID Names Image State Status RunningFor
+	printf "\n"
+	docker ps --all --format 'json' | jq -r '. | select(.Names | contains("ansible-workspace")) | select(.Image == "vpayno/ci-generic-debian:latest") | "\(.ID),\(.Names),\(.Image),\(.State),\(.Status),\(.RunningFor)"'
+	printf "\n"
+} | column -t --separator ","

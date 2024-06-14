@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+declare devcontainer_id
+
+devcontainer_id="$(docker ps --all --format 'json' | jq -r '. | select(.Names | contains("ansible-workspace")) | select(.Image == "vpayno/ci-generic-debian:latest") | .ID')"
+
+./.devcontainer/scripts/dc-list
+printf "\n"
+
+# delete old container
+if [[ -n ${devcontainer_id} ]]; then
+	printf "Removing old container...\n"
+	echo Running: docker rm -f "${devcontainer_id}"
+	docker rm -f "${devcontainer_id}"
+	printf "done.\n"
+fi
+printf "\n"

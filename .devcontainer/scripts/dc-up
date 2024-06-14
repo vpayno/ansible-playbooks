@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+# shellcheck disable=SC2120
+rword() {
+	local -a words
+	local word
+	local -i word_size=${1:-0}
+	local -i tries
+
+	mapfile -t words </usr/share/dict/words
+	if [[ ${word_size} -le 7 ]]; then
+		((word_size = (RANDOM % 11) + 5))
+	fi
+
+	tries=0
+	while [[ ${#word} -le $((word_size - (RANDOM % 5))) ]] || [[ ${#word} -ge $((word_size - (RANDOM % 5))) ]]; do
+		word=${words[$((RANDOM * (RANDOM % 2) + RANDOM * (RANDOM % 2 + 2)))]}
+		((tries += 1))
+		[[ ${tries} -ge ${#words[@]} ]] && break
+	done
+
+	echo "${word}"
+}
+
+declare devcontainer_id
+
+devcontainer_id="$(docker ps --all --format 'json' | jq -r '. | select(.Names | contains("ansible-workspace")) | select(.Image == "vpayno/ci-generic-debian:latest") | .ID')"
+
+./.devcontainer/scripts/dc-list
+printf "\n"
+
+declare -x devcontainer_username
+declare -x devcontainer_password
+declare -x -i devcontainer_uid
+declare -x -i devcontainer_gid
+
+if [[ -z ${devcontainer_id} ]]; then
+	# create data for setup scripts that run inside dev-container
+	cat >./.devcontainer/scripts/data.tmp <<-EOF
+		devcontainer_username="$(id --name --user)"
+		devcontainer_password="$(rword)"
+		devcontainer_uid="$(id --user)"
+		devcontainer_gid="$(id --group)"
+	EOF
+fi
+
+# delete old container
+if [[ -n ${devcontainer_id} ]]; then
+	printf "Removing old container...\n"
+	docker rm -f "${devcontainer_id}"
+	printf "done.\n"
+fi
+printf "\n"
+
+# starts up container
+time devcontainer up --mount type=bind,source="${HOME}",target="${HOME}" --workspace-folder "${PWD}"
+printf "\n"

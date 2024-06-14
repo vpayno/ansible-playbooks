@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -e
+set -x
+
+if [[ -f ./.devcontainer/scripts/data.tmp ]]; then
+	# shellcheck disable=SC1091 source=.devcontainer/scripts/data.tmp
+	source ./.devcontainer/scripts/data.tmp
+fi
+
+printf "\n"
+./.devcontainer/scripts/dc-list
+printf "\n"
+
+if [[ ${1} == --root ]]; then
+	devcontainer exec --workspace-folder "${PWD}" bash -i
+else
+	devcontainer exec --workspace-folder "${PWD}" sudo -u "${devcontainer_username:-USER}" -i
+fi
