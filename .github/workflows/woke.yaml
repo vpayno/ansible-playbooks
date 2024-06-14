@@ -1,0 +1,35 @@
+---
+#
+# https://github.com/get-woke/woke-action-reviewdog
+# https://github.com/get-woke/woke-action
+#
+name: woke
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  woke:
+    name: woke
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v4
+      - name: Woke with Reviewdog
+        uses: get-woke/woke-action-reviewdog@v0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Change reviewdog reporter if you need [github-pr-check,github-check,github-pr-review].
+          reporter: github-pr-review
+          # Change reporter level if you need. GitHub Status Check won't become failure with warning.
+          level: error
+          # Enable this to fail the check when violations are found
+          fail-on-error: true

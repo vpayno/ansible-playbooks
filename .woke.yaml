@@ -1,0 +1,7 @@
+---
+# .woke.yaml
+rules:
+  - name: dummy
+
+ignore_files:
+  - site/
