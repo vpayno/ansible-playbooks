@@ -1,0 +1,42 @@
+---
+# ~/.vim/configs/yamllint-custom.yaml
+#
+# yamllint -c ~/.vim/configs/yamllint-custom.yaml
+#
+# yamllint version: 1.31.0
+yaml-files:
+  - '*.yaml'
+  - '*.yml'
+  - '.yamllint'
+
+rules:
+  anchors: enable
+  braces: enable
+  brackets: enable
+  colons: enable
+  commas: enable
+  comments:
+    level: warning
+  comments-indentation:
+    level: warning
+  document-end: disable
+  document-start:
+    level: warning
+  empty-lines: enable
+  empty-values: disable
+  float-values: disable
+  hyphens: enable
+  indentation: enable
+  key-duplicates: enable
+  key-ordering: disable
+  line-length:
+    allow-non-breakable-inline-mappings: true
+    level: warning
+    max: 240
+  new-line-at-end-of-file: enable
+  new-lines: enable
+  octal-values: disable
+  quoted-strings: disable
+  trailing-spaces: enable
+  truthy:
+    level: warning
