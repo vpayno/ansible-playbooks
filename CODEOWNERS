@@ -18,3 +18,4 @@ CHANGELOG.md              @vpayno
 .darglint                 @vpayno
 .markdownlint.yaml        @vpayno
 cliff.toml                @vpayno
+.pyspelling.yml           @vpayno

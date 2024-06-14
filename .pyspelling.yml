@@ -1,0 +1,19 @@
+---
+spellchecker: aspell
+
+matrix:
+  - name: Config
+    aspell:
+      lang: en
+      d: en_US
+    sources:
+      - ./LICENSE
+      - '**/*.md'
+      - ./profile
+      - ./.github
+      - '**.yml'
+      - '**.yaml'
+    default_encoding: utf-8
+    dictionary:
+      wordlists:
+        - .dict-custom.txt
