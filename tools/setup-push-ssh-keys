@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+declare -a key_files
+declare -a key_data
+declare -a hosts=("${@}")
+
+# select public ssh keys to push to a server
+mapfile -t key_files < <(gum choose --header="# Please select one or more SSH Public Keys to add to the server(s) authorized_keys file:" --ordered --no-limit --select-if-one ~/.ssh/id_*pub)
+mapfile -t key_data < <(cat "${key_files[@]}")
+
+# todo: select servers to push authorized_keys to
+
+for h in "${hosts[@]}"; do
+	# shellcheck disable=SC2087
+	\ssh -o "ControlMaster=no" -o "ControlPath=none" -o "PreferredAuthentications=password" -o "PubkeyAuthentication=no" "${h}" bash <<-EOF
+		mkdir -pv ~/.ssh
+		chmod -v 0700 ~/.ssh
+		touch ~/.ssh/authorized_keys
+		chmod -v 0600 ~/.ssh/authorized_keys
+		printf "%s\n" "${key_data[@]}" | tee -a ~/.ssh/authorized_keys
+	EOF
+done
