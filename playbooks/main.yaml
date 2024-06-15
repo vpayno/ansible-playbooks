@@ -18,3 +18,8 @@
   tags:
     - docker
     - raspberrypi
+- name: Dagger install
+  ansible.builtin.import_playbook: dagger.yaml
+  tags:
+    - dagger
+    - raspberrypi

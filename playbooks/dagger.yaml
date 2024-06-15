@@ -1,0 +1,18 @@
+---
+# Setup Dagger
+# TODO: Need to figure out how to tell when it's outdated so it gets updated.
+- name: Download Dagger installer and run it
+  hosts: all
+  become: true
+  tasks:
+    - name: Download Dagger installer
+      ansible.builtin.get_url:
+        dest: /usr/local/sbin/dagger-install
+        url: https://dl.dagger.io/dagger/install.sh
+        mode: "0550"
+    - name: Run Dagger installer
+      environment:
+        BIN_DIR: /usr/local/bin
+      ansible.builtin.command: /usr/local/sbin/dagger-install
+      args:
+        creates: /usr/local/bin/dagger
