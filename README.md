@@ -12,7 +12,7 @@ Ansible playbook for my home lab.
 
 ## RunMe Playbook
 
-This and other readme files in this repo are RunMe Playbooks.
+This and other read-me files in this repo are RunMe Playbooks.
 
 Use this playbook step/task to update the [RunMe](https://runme.dev) CLI.
 
@@ -22,7 +22,7 @@ If you don't have RunMe installed, you'll need to copy/paste the command. :)
 go install github.com/stateful/runme/v3@v3
 ```
 
-Setup command autocompletion:
+Setup command auto-completion:
 
 ```bash { background=false category=runme closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=setup-runme-autocompletion promptEnv=true terminalRows=10 }
 if [[ -d ~/.bash_libs.d ]]; then

@@ -1,4 +1,4 @@
-# Runme playbook - Initial Host Setup After Installation
+# RunMe playbook - Initial Host Setup After Installation
 
 The playbooks necessary to setup a host after it has been installed.
 
