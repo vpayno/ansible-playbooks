@@ -1,0 +1,47 @@
+---
+# Setup Runme
+- name: Install Runme
+  hosts: all
+  become: true
+  tasks:
+    - name: Gather package facts
+      ansible.builtin.package_facts:
+        manager: apt
+    - name: Get latest Runme version
+      register: runme_outofdate
+      changed_when: '"runme" in ansible_facts.packages'
+      ansible.builtin.shell: |
+        set -o pipefail
+        if ! command -v runme >& /dev/null; then
+            printf "%s" "true"
+            exit 0
+        fi
+        latest_version="$(curl -sS https://api.github.com/repos/stateful/runme/releases/latest | jq -r '.tag_name' | sed -r -e 's:^v::g')"
+        current_version="$(runme --version | awk '/runme version/ { print $3 }')"
+        if [[ ${current_version} == ${latest_version} ]]; then
+          printf "%s" "false"
+        else
+          printf "%s" "true"
+        fi
+      args:
+        executable: /usr/bin/bash
+    - name: Get Runme download URLs
+      when: (runme_outofdate.stdout | bool) and (ansible_architecture == "x86_64" or ansible_architecture == "aarch64")
+      ansible.builtin.shell: |
+        set -o pipefail
+        deb_arch=x86_64
+        if dpkg --print-architecture | grep -q arm64; then
+          deb_arch=arm64
+        fi
+        curl -sS https://api.github.com/repos/stateful/runme/releases/latest \
+            | jq -r '.assets | .[] | select(.name|test("[.]deb$")) | .browser_download_url' \
+            | grep "_linux_${deb_arch}.deb"
+      args:
+        executable: /usr/bin/bash
+      register: deb_runme_url
+      changed_when: "'runme_linux_' in deb_runme_url.stdout"
+    - name: Install Runme dep package
+      when: (runme_outofdate.stdout | bool) and (ansible_architecture == "x86_64" or ansible_architecture == "aarch64")
+      ansible.builtin.apt:
+        state: present
+        deb: "{{ deb_runme_url.stdout }}"

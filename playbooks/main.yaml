@@ -23,3 +23,8 @@
   tags:
     - dagger
     - raspberrypi
+- name: RunMe install
+  ansible.builtin.import_playbook: runme.yaml
+  tags:
+    - runme
+    - raspberrypi
