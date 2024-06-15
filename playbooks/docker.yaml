@@ -1,0 +1,56 @@
+---
+# Setup Docker
+- name: Ensure common packages are installed
+  hosts: all
+  become: true
+  vars:
+    deb_architecture:
+      aarch64: "arm64"
+      x86_64: "amd64"
+  tasks:
+    - name: Remove old Docker on Debian
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - docker
+        - cleanup
+      when: ansible_distribution == "Debian"
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: absent
+        update_cache: true
+      with_items:
+        - docker.io
+        - docker-doc
+        - docker-compose
+        - podman-docker
+        - containerd
+        - runc
+    - name: Setup Docker Apt repository
+      block:
+        - name: Docker-Repo | add apt-keyring
+          ansible.builtin.get_url:
+            dest: /etc/apt/keyrings/docker.asc
+            url: https://download.docker.com/linux/debian/gpg
+            mode: "0444"
+        - name: Docker-Repo | add apt-source
+          ansible.builtin.apt_repository:
+            state: present
+            repo: "deb [arch={{ [ansible_architecture] | map('extract', deb_architecture) | first }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+        - name: Setup new Docker on Debian
+          ansible.builtin.apt:
+            name: "{{ item }}"
+            state: present
+            update_cache: true
+          with_items:
+            - docker-ce
+            - docker-ce-cli
+            - containerd.io
+            - docker-buildx-plugin
+            - docker-compose-plugin
+    - name: Add docker supplemental group to caller
+      ansible.builtin.user:
+        name: "{{ lookup('env', 'USER') }}"
+        groups: docker
+        append: true
