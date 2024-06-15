@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+echo Running: ansible "${1}" -m ansible.builtin.setup >&2
+ansible "${1}" -m ansible.builtin.setup | sed -r -e "s:^${1} .* => ::g" | jqp
