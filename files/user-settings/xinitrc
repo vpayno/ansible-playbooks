@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+/usr/bin/xscreensaver -nosplash &
+exec sway

@@ -1,0 +1,29 @@
+---
+# Make sure common workstation/server enabled are enabled on all hosts.
+- name: Ensure common services are enabled
+  hosts: all
+  become: true
+  tasks:
+    - name: Ensure common services are enabled
+      tags:
+        - services
+        - common
+        - raspberrypi
+        - raspianos
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      with_items:
+        - ntp
+        - cron
+        - ssh
+    - name: Enable root's blank screensaver
+      tags:
+        - screensaver
+        - raspberrypi
+        - raspianos
+      ansible.builtin.copy:
+        dest: ~/.xscreensaver
+        content: "mode: blank\n"
+        mode: '0600'

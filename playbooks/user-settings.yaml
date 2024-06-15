@@ -1,0 +1,27 @@
+---
+# Make sure my account is setup consistently
+- name: Set user profile settings
+  hosts: all
+  become: false
+  tasks:
+    - name: Enable blank screensaver
+      tags:
+        - screensaver
+        - raspberrypi
+        - raspianos
+      ansible.builtin.copy:
+        dest: ~/.xscreensaver
+        content: "mode: blank\n"
+        mode: '0600'
+    - name: Use sway and enable screensaver (.xinit.rc)
+      tags:
+        - screensaver
+        - raspberrypi
+        - raspianos
+      vars:
+        # to "hide" no relative paths lint error
+        source_path: ../files/user-settings/xinitrc
+      ansible.builtin.copy:
+        src: "{{ source_path }}"
+        dest: ~/.xinit.rc
+        mode: '0600'

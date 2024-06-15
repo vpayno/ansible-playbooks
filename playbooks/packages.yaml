@@ -1,0 +1,226 @@
+---
+# Make sure common workstation/server packages are installed on all hosts.
+- name: Ensure common packages are installed
+  hosts: all
+  become: true
+  tasks:
+    - name: Ensure base dependencies are installed
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - base-dependencies
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      with_items:
+        - curl
+        - ca-certificates
+        - jq
+        - jqp
+        - xq
+        - yq
+    - name: Ensure NTP is installed
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - time
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      with_items:
+        - ntp
+        - ntpdate
+        - ntpstat
+    - name: Install terminal screensavers
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - terminal
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      with_items:
+        - cbonsai
+        - cmatrix
+        - cowsay
+        - lolcat
+        - pipes-sh
+        - tty-clock
+        - vlock
+    - name: Install X screensavers
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - X
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      with_items:
+        - xscreensaver
+        - xsecurelock
+    - name: Install package managers
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - package-managers
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      with_items:
+        - aptitude
+        - nala
+        - nix-bin
+        - nix-setup-systemd
+    - name: Install Ansible tools
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - ansible-tools
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      with_items:
+        - ansible
+        - ansible-lint
+    - name: Install terminal tools
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - terminal-tools
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      with_items:
+        - tmux
+        - tmuxp
+    - name: Install X tools
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - X-tools
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      with_items:
+        - alacritty
+        - i3
+        - dmenu
+        - suckless-tools
+        - sway
+        - sway-backgrounds
+        - sway-notification-center
+        - swaybg
+        - swayidle
+        - swayimg
+        - swaykbdd
+        - swaylock
+        - tofi
+        - waybar
+        - wdisplays
+        - wlsunset
+        - wofi
+        - grimshot
+        - wayfire
+        - waybar
+        - wayland-protocols
+        - wayland-scanner++
+        - wayland-utils
+        - wayout
+        - waypipe
+        - wayvnc
+        - wlopm
+    - name: Install hardware tools
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - hw-tools
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      with_items:
+        - blktool
+        - bonnie++
+        - dstat
+        - hardinfo
+        - hd-idle
+        - hdparm
+        - iotop
+        - lsscsi
+        - mtp-tools
+        - nvme-cli
+        - parted
+        - scsitools
+        - sdparm
+        - sg3-utils
+        - smartmontools
+        - tgt
+        - usbip
+        - usbtop
+        - usbutils
+    - name: Install editors
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - editors
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      with_items:
+        - neovim
+        - vim-nox
+    - name: Install filesystem tools
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - filesystems
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      # keep fuse3 at the top of the list
+      with_items:
+        - fuse3
+        - aptfs
+        - attr
+        - dislocker
+        - dosfstools
+        - exfat-fuse
+        - exfatprogs
+        - fatattr
+        - fatcat
+        - fatresize
+        - fatsort
+        - isolinux
+        - lvm2
+        - makebootfat
+        - mdadm
+        - ntfs-3g
+        - reiserfsprogs
+        - squashfuse
+        - sshfs
+        - xfsdump
+        - xfsprogs
+        - zfs-dkms
+        - zfs-zed
+        - zfsutils-linux

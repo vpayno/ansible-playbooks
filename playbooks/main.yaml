@@ -1,0 +1,14 @@
+---
+- name: Common packages
+  ansible.builtin.import_playbook: packages.yaml
+  tags:
+    - raspberrypi
+- name: Common services
+  ansible.builtin.import_playbook: services.yaml
+  tags:
+    - raspberrypi
+- name: User settings
+  ansible.builtin.import_playbook: user-settings.yaml
+  tags:
+    - user
+    - raspberrypi
