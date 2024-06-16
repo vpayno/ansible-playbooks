@@ -56,6 +56,10 @@ declare -a apt_pkgs=(
 	ansible
 	ansible-lint
 	jqp
+	libvirt-clients-qemu
+	libvirt-daemon
+	libvirt-daemon-config-network
+	libvirt-daemon-driver-qemu
 	nala
 	vagrant
 	vagrant-hostmanager
