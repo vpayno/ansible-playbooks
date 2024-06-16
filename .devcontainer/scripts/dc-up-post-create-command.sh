@@ -75,6 +75,38 @@ if [[ -n ${NEWUSER} ]]; then
 	EOF
 fi
 
+tee >/usr/local/bin/dc-user-setup-ssh-agent <<-EOF
+	#!/usr/bin/env bash
+
+	# this script assumes that you will run it once and then start tmux which
+	# will inherit the environment on all future shells.
+
+	if [[ -z \${SSH_AUTH_SOCK} ]]; then
+		ssh-agent | tee ~/.ssh-agent-settings-dc.txt
+		chmod -v 0600 ~/.ssh-agent-settings-dc.txt
+		printf "\n"
+
+		source ~/.ssh-agent-settings-dc.txt
+		printf "\n"
+
+		sleep 1s
+
+		ssh-add -L
+		printf "\n"
+
+		printf "Please use\n\n\tssh-add ~/.ssh/id_keyname\n\nto add keys to your ssh-agent.\n"
+	else
+		source ~/.ssh-agent-settings-dc.txt
+		printf "\n"
+
+		sleep 1s
+
+		ssh-add -L
+		printf "\n"
+	fi
+EOF
+chmod -v 0755 /usr/local/bin/dc-user-setup-ssh-agent
+
 # https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html#installing-ansible-on-debian
 curl -sS "https://keyserver.ubuntu.com/pks/lookup?fingerprint=on&op=get&search=0x6125E2A8C77F2818FB7BD15B93C4A3FD7BB9C367" | sudo gpg --dearmour -o /usr/share/keyrings/ansible-archive-keyring.gpg
 apt update
