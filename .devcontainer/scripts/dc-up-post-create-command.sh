@@ -20,6 +20,7 @@ declare -a cargo_pkgs=(
 )
 
 declare -a go_pkgs=(
+	github.com/charmbracelet/glow@latest
 	github.com/charmbracelet/gum@latest
 	github.com/keewek/ansible-pretty-print@latest
 	github.com/mikefarah/yq/v4@latest
