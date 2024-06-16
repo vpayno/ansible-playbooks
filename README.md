@@ -56,3 +56,7 @@ npm install -g @devcontainers/cli
 ```
 
 The rest of the Dev Container notes are located in [DEVCONTAINER.md](./DEVCONTAINER.md).
+
+## Ansible
+
+The Ansible notes are located in the file [ANSIBLE.md](./ANSIBLE.md).
