@@ -1,0 +1,71 @@
+---
+# Setup VM tools
+- name: Ensure common packages are installed
+  hosts: all
+  become: true
+  tags:
+    - packages
+    - raspberrypi
+    - raspianos
+    - vms
+  tasks:
+    - name: Ensue QEMU packages are installed
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      with_items:
+        - qemu-block-extra
+        - qemu-efi-aarch64
+        - qemu-efi-arm
+        - qemu-system
+        - qemu-system-arm
+        - qemu-system-mips
+        - qemu-system-misc
+        - qemu-system-x86
+        - qemu-system-gui
+        - qemu-user-binfmt
+        - qemu-utils
+        - qemu-web-desktop
+        - qemu-guest-agent
+        - u-boot-qemu
+        - ksmtuned
+        - randmac
+        - virgl-server
+        - xmount
+    - name: Ensue libvirt packages are installed
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      with_items:
+        - libvirt-clients
+        - libvirt-clients-qemu
+        - libvirt-daemon
+        - libvirt-daemon-config-network
+        - libvirt-daemon-config-nwfilter
+        - libvirt-daemon-driver-qemu
+        - libvirt-daemon-driver-storage-iscsi-direct
+        - libvirt-daemon-driver-storage-zfs
+        - libvirt-daemon-system
+        - libvirt-daemon-system-systemd
+        - libvirt-dbus
+        - virt-manager
+    - name: Ensue Vagrant packages are installed
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      with_items:
+        - vagrant
+        - vagrant-cachier
+        - vagrant-hostmanager
+        - vagrant-libvirt
+        - vagrant-sshfs
+    - name: Add VM related supplemental groups to caller
+      ansible.builtin.user:
+        name: "{{ lookup('env', 'USER') }}"
+        groups:
+          - kvm
+          - libvirt
+        append: true

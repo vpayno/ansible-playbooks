@@ -18,6 +18,12 @@
   tags:
     - docker
     - raspberrypi
+- name: VM Tools
+  when: ansible_distribution == "Debian" and ansible_distribution_release == "bookworm"
+  ansible.builtin.import_playbook: vms.yaml
+  tags:
+    - vms
+    - raspberrypi
 - name: Dagger install
   ansible.builtin.import_playbook: dagger.yaml
   tags:
