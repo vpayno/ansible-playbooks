@@ -12,7 +12,7 @@
 		"source=/var/run/docker.sock,target=/var/run/docker-host.sock,type=bind"
 	],
 	"portsAttributes": {},
-	"postCreateCommand": "cd /workspaces/ansible-playbooks/; tree .devcontainer/; ./.devcontainer/scripts/dc-up-post-create-command.sh",
+	"postCreateCommand": "cd /workspaces/ansible-playbooks/; tree .devcontainer/; ./.devcontainer/scripts/dc-up-post-create-command.sh user:${localEnv:USER}",
 	"remoteUser": "root",
 	"runArgs": [
 		"--name",

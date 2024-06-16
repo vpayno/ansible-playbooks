@@ -6,6 +6,14 @@ set -e
 # shellcheck disable=SC1091 source=.devcontainer/scripts/data.tmp
 source /workspaces/ansible-playbooks/.devcontainer/scripts/data.tmp
 
+# process name:value args
+declare NEWUSER
+for arg in "${@}"; do
+	if [[ $arg =~ ^user: ]]; then
+		NEWUSER="${arg#*:}"
+	fi
+done
+
 # shellcheck disable=SC2154
 {
 	groupadd --gid "${devcontainer_gid}" "${devcontainer_username}"
@@ -55,6 +63,13 @@ declare -a apt_pkgs=(
 )
 
 # these commands also run as root
+
+if [[ -n ${NEWUSER} ]]; then
+	printf "Allowing password-less sudo for user %s\n" "${NEWUSER}"
+	tee >/etc/sudoers.d/020_user-nopasswd <<-EOF
+		${NEWUSER} ALL=(ALL) NOPASSWD: ALL
+	EOF
+fi
 
 # https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html#installing-ansible-on-debian
 curl -sS "https://keyserver.ubuntu.com/pks/lookup?fingerprint=on&op=get&search=0x6125E2A8C77F2818FB7BD15B93C4A3FD7BB9C367" | sudo gpg --dearmour -o /usr/share/keyrings/ansible-archive-keyring.gpg
