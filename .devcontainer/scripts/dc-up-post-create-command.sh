@@ -47,9 +47,11 @@ declare npm_pkg
 declare -a apt_pkgs=(
 	ansible
 	ansible-lint
+	jqp
 	nala
 	vagrant
 	vagrant-hostmanager
+	xq
 )
 
 # these commands also run as root
