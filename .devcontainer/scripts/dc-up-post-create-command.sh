@@ -44,12 +44,21 @@ declare -a npm_pkgs=(
 )
 declare npm_pkg
 
+declare -a apt_pkgs=(
+	ansible
+	ansible-lint
+	nala
+	vagrant
+	vagrant-hostmanager
+)
+
 # these commands also run as root
 
 # https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html#installing-ansible-on-debian
 curl -sS "https://keyserver.ubuntu.com/pks/lookup?fingerprint=on&op=get&search=0x6125E2A8C77F2818FB7BD15B93C4A3FD7BB9C367" | sudo gpg --dearmour -o /usr/share/keyrings/ansible-archive-keyring.gpg
 apt update
-apt install -y ansible ansible-lint
+time apt install -y "${apt_pkgs[@]}"
+printf "\n"
 
 time cargo install --locked "${cargo_pkgs[@]}"
 printf "\n"
