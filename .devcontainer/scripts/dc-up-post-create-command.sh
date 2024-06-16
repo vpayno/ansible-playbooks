@@ -39,6 +39,11 @@ declare -a ansible_galaxy_pkgs=(
 )
 declare ag_pkg
 
+declare -a npm_pkgs=(
+	@ansible/ansible-language-server
+)
+declare npm_pkg
+
 # these commands also run as root
 
 # https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html#installing-ansible-on-debian
@@ -64,4 +69,8 @@ done
 
 time for ag_pkg in "${ansible_galaxy_pkgs[@]}"; do
 	ansible-galaxy collection install "${ag_pkg}"
+done
+
+time for npm_pkg in "${npm_pkgs[@]}"; do
+	npm install -g "${npm_pkg}"
 done
