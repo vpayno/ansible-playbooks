@@ -27,7 +27,7 @@
         - podman-docker
         - containerd
         - runc
-    - name: Setup Docker Apt repository
+    - name: Setup Docker
       block:
         - name: Docker-Repo | add apt-keyring
           ansible.builtin.get_url:
@@ -38,7 +38,7 @@
           ansible.builtin.apt_repository:
             state: present
             repo: "deb [arch={{ [ansible_architecture] | map('extract', deb_architecture) | first }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
-        - name: Setup new Docker on Debian
+        - name: Docker-Repo | install packages
           ansible.builtin.apt:
             name: "{{ item }}"
             state: present
