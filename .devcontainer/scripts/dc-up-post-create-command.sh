@@ -63,6 +63,7 @@ declare -a apt_pkgs=(
 	nala
 	vagrant
 	vagrant-hostmanager
+	vagrant-sshfs
 	xq
 )
 
