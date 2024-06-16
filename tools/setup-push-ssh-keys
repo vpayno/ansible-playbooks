@@ -1,11 +1,29 @@
 #!/usr/bin/env bash
 
+set -e
+set -o pipefail
+
 declare -a key_files
 declare -a key_data
 declare -a hosts=("${@}")
 
+if [[ ${#hosts[@]} -eq 0 ]]; then
+	printf "ERROR: please add a space separate list of hosts to update\n"
+	printf "\n"
+	printf "\t./tools/setup-push-ssh-keys fqdn1 fqdn2\n"
+	printf "\n"
+	exit 1
+fi
+
 # select public ssh keys to push to a server
-mapfile -t key_files < <(gum choose --header="# Please select one or more SSH Public Keys to add to the server(s) authorized_keys file:" --ordered --no-limit --select-if-one ~/.ssh/id_*pub)
+while [[ ${#key_files[@]} -eq 0 ]]; do
+	mapfile -t key_files < <(gum choose --header="# Please select one or more SSH Public Keys to add to the server(s) authorized_keys file:" --ordered --no-limit --select-if-one "abort/cancel" ~/.ssh/id_*pub)
+
+	if [[ ${key_files[0]} == "abort/cancel" ]]; then
+		exit
+	fi
+done
+
 mapfile -t key_data < <(cat "${key_files[@]}")
 
 # todo: select servers to push authorized_keys to
