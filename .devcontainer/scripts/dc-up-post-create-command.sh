@@ -49,8 +49,8 @@ apt install -y ansible ansible-lint
 time cargo install --locked "${cargo_pkgs[@]}"
 printf "\n"
 
-time cargo install --git https://github.com/helix-editor/helix.git --tag "$(git ls-remote --tags https://github.com/helix-editor/helix.git | sed -r -e 's:.*/::g' | grep -E '^[0-9]+[.][0-9]+([.][0-9]+)?$' | sort -rV | head -n 1)" helix-term
-printf "\n"
+# time cargo install --git https://github.com/helix-editor/helix.git --tag "$(git ls-remote --tags https://github.com/helix-editor/helix.git | sed -r -e 's:.*/::g' | grep -E '^[0-9]+[.][0-9]+([.][0-9]+)?$' | sort -rV | head -n 1)" helix-term
+# printf "\n"
 
 time for go_pkg in "${go_pkgs[@]}"; do
 	time go install "${go_pkg}"
