@@ -9,7 +9,7 @@ source /workspaces/ansible-playbooks/.devcontainer/scripts/data.tmp
 # shellcheck disable=SC2154
 {
 	groupadd --gid "${devcontainer_gid}" "${devcontainer_username}"
-	useradd --uid "${devcontainer_uid}" --gid "${devcontainer_gid}" --no-create-home --groups docker "${devcontainer_username}"
+	useradd --uid "${devcontainer_uid}" --gid "${devcontainer_gid}" --no-create-home --groups docker,sudo "${devcontainer_username}"
 	chsh --shell /bin/bash "${devcontainer_username}"
 	printf "%s\n%s\n" "${devcontainer_password}" "${devcontainer_password}" | passwd "${devcontainer_username}"
 	id "${devcontainer_username}"
