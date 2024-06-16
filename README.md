@@ -43,7 +43,7 @@ go install github.com/charmbracelet/gum@latest
 go install github.com/mikefarah/yq/v4@latest
 ```
 
-## Dev-Container
+## Dev Container
 
 This project has a dev-container to make it easier to run ansible commands from any workstation,
 it just needs [Docker](https://docs.docker.com/engine/install/)
@@ -55,32 +55,4 @@ To install the Dev Containers CLI:
 npm install -g @devcontainers/cli
 ```
 
-To start the Dev Container:
-
-```bash { background=false category=devcontainer closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=devcontainer-up promptEnv=true terminalRows=10 }
-./.devcontainer/scripts/dc-up
-```
-
-To run a shell in the Dev Container:
-
-```bash { background=false category=devcontainer closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=devcontainer-run promptEnv=true terminalRows=10 }
-./.devcontainer/scripts/dc-run
-```
-
-To stop the Dev Container:
-
-```bash { background=false category=devcontainer closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=devcontainer-down promptEnv=true terminalRows=10 }
-./.devcontainer/scripts/dc-down
-```
-
-To destroy the Dev Container:
-
-```bash { background=false category=devcontainer closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=devcontainer-destroy promptEnv=true terminalRows=10 }
-./.devcontainer/scripts/dc-destroy
-```
-
-To list the Dev Containers:
-
-```bash { background=false catgory=devcontainer closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=devcontainer-list promptEnv=true terminalRows=10 }
-./.devcontainer/scripts/dc-list
-```
+The rest of the Dev Container notes are located in [DEVCONTAINER.md](./DEVCONTAINER.md).
