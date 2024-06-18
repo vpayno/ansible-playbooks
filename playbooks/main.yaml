@@ -38,3 +38,8 @@
   ansible.builtin.import_playbook: raspberrypi.yaml
   tags:
     - raspberrypi
+- name: tailscale package install
+  ansible.builtin.import_playbook: tailscale.yaml
+  tags:
+    - wireguard
+    - raspberrypi

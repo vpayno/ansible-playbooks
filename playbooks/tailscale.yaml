@@ -1,0 +1,24 @@
+---
+# Setup tailscale
+- name: Ensure tailscale packages are installed
+  hosts: all
+  become: true
+  tasks:
+    - name: Setup tailscale
+      block:
+        - name: Tailscale-Repo | add apt-keyring
+          ansible.builtin.get_url:
+            dest: /usr/share/keyrings/tailscale-archive-keyring.gpg
+            url: https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg
+            mode: "0444"
+        - name: Tailscale-Repo | add apt-source
+          ansible.builtin.apt_repository:
+            state: present
+            repo: "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/stable/debian bookworm main"
+        - name: Tailscale-Repo | install packages
+          ansible.builtin.apt:
+            name: "{{ item }}"
+            state: present
+            update_cache: true
+          with_items:
+            - tailscale
