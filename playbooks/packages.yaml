@@ -14,6 +14,7 @@
         name: "{{ item }}"
         state: present
         update_cache: true
+        cache_valid_time: 3600
       with_items:
         - curl
         - ca-certificates
@@ -31,6 +32,7 @@
         name: "{{ item }}"
         state: present
         update_cache: true
+        cache_valid_time: 3600
       with_items:
         - ntp
         - ntpdate
@@ -45,6 +47,7 @@
         name: "{{ item }}"
         state: present
         update_cache: true
+        cache_valid_time: 3600
       with_items:
         - cbonsai
         - cmatrix
@@ -63,6 +66,7 @@
         name: "{{ item }}"
         state: present
         update_cache: true
+        cache_valid_time: 3600
       with_items:
         - xscreensaver
         - xsecurelock
@@ -76,6 +80,7 @@
         name: "{{ item }}"
         state: present
         update_cache: true
+        cache_valid_time: 3600
       with_items:
         - aptitude
         - nala
@@ -91,6 +96,7 @@
         name: "{{ item }}"
         state: present
         update_cache: true
+        cache_valid_time: 3600
       with_items:
         - ansible
         - ansible-lint
@@ -104,6 +110,7 @@
         name: "{{ item }}"
         state: present
         update_cache: true
+        cache_valid_time: 3600
       with_items:
         - tmux
         - tmuxp
@@ -117,6 +124,7 @@
         name: "{{ item }}"
         state: present
         update_cache: true
+        cache_valid_time: 3600
       with_items:
         - alacritty
         - i3
@@ -155,6 +163,7 @@
         name: "{{ item }}"
         state: present
         update_cache: true
+        cache_valid_time: 3600
       with_items:
         - blktool
         - bonnie++
@@ -185,6 +194,7 @@
         name: "{{ item }}"
         state: present
         update_cache: true
+        cache_valid_time: 3600
       with_items:
         - neovim
         - vim-nox
@@ -198,6 +208,7 @@
         name: "{{ item }}"
         state: present
         update_cache: true
+        cache_valid_time: 3600
       # keep fuse3 at the top of the list
       with_items:
         - fuse3
