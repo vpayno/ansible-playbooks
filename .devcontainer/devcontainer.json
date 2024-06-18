@@ -10,7 +10,8 @@
 	"features": {},
 	"mounts": [
 		"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind",
-		"source=/var/run/libvirt,target=/var/run/libvirt,type=bind"
+		"source=/var/run/libvirt,target=/var/run/libvirt,type=bind",
+		"source=/var/lib/libvirt,target=/var/lib/libvirt,type=bind"
 	],
 	"portsAttributes": {},
 	"postCreateCommand": "cd /workspaces/ansible-playbooks/; tree .devcontainer/; ./.devcontainer/scripts/dc-up-post-create-command.sh user:${localEnv:USER}",
