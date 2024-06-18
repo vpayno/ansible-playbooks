@@ -1,0 +1,22 @@
+---
+# Make sure RaspberryPi specific workstation/server packages are installed
+- name: Ensure RaspberryPi packages are installed
+  hosts: all
+  become: true
+  tasks:
+    - name: Ensure base dependencies are installed
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - base-dependencies
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+      with_items:
+        - libraspberrypi-bin
+        - libraspberrypi0
+        - gxemul
+        - libbcm2835-dev

@@ -34,3 +34,7 @@
   tags:
     - runme
     - raspberrypi
+- name: RaspberryPi package install
+  ansible.builtin.import_playbook: raspberrypi.yaml
+  tags:
+    - raspberrypi
