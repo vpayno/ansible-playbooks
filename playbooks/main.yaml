@@ -43,3 +43,7 @@
   tags:
     - wireguard
     - raspberrypi
+- name: NVIDIA package install
+  ansible.builtin.import_playbook: nvidia.yaml
+  tags:
+    - nvidia

@@ -1,0 +1,28 @@
+---
+# Setup NVIDIA
+# https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=Debian&target_version=12&target_type=deb_network
+- name: Ensure NVIDIA packages are installed
+  hosts: all
+  become: true
+  tasks:
+    - name: Check for NVIDIA gpu
+      ansible.builtin.shell: |
+        set -o pipefail
+        lshw -json -C display | jq -e '.[] | select(.class == "display") | select(.vendor | contains("NVIDIA"))'
+      register: has_nvidia_gpu
+      changed_when: false
+    - name: Setup NVIDIA tools and drivers
+      when: has_nvidia_gpu.rc == 0
+      block:
+        - name: Setup NVIDIA-Repo | add apt-keyring
+          ansible.builtin.apt:
+            deb: "https://developer.download.nvidia.com/compute/cuda/repos/debian12/x86_64/cuda-keyring_1.1-1_all.deb"
+        - name: Setup NVIDIA-Repo | install packages
+          ansible.builtin.apt:
+            name: "{{ item }}"
+            state: present
+            update_cache: true
+          with_items:
+            - cuda-toolkit
+            - nvidia-kernel-open-dkms
+            - cuda-drivers
