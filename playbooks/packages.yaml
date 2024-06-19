@@ -180,6 +180,7 @@
         - hd-idle
         - hdparm
         - iotop
+        - lshw
         - lsscsi
         - mtp-tools
         - nvme-cli
