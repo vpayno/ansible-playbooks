@@ -1,0 +1,33 @@
+---
+# Setup AMD
+# https://wiki.debian.org/AtiHowTo
+- name: Ensure AMD packages are installed
+  hosts: all
+  become: true
+  tasks:
+    - name: Check for AMD gpu
+      ansible.builtin.shell: |
+        set -o pipefail
+        lshw -json -C display | jq -e '.[] | select(.class == "display") | select(.vendor | contains("Advanced Micro Devices"))'
+      register: has_amd_gpu
+      changed_when: false
+    - name: Setup AMD tools and drivers
+      when: has_amd_gpu.rc == 0
+      block:
+        - name: AMD-Repo | add apt-source
+          ansible.builtin.apt_repository:
+            state: present
+            repo: "deb http://deb.debian.org/debian bookworm main contrib non-free-firmware"
+        - name: Setup AMD-Repo | install packages
+          ansible.builtin.apt:
+            name: "{{ item }}"
+            state: present
+            update_cache: true
+          with_items:
+            - firmware-amd-graphics
+            - libgl1-mesa-dri
+            - libglx-mesa0
+            - mesa-vulkan-drivers
+            - xserver-xorg-video-amdgpu
+            - xserver-xorg-video-vesa
+            - xserver-xorg-video-fbdev

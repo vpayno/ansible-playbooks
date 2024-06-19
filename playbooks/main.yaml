@@ -47,3 +47,7 @@
   ansible.builtin.import_playbook: nvidia.yaml
   tags:
     - nvidia
+- name: AMD package install
+  ansible.builtin.import_playbook: amd.yaml
+  tags:
+    - amd
