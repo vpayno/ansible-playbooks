@@ -1,5 +1,6 @@
 ---
 # Setup Docker
+# https://docs.docker.com/storage/storagedriver/zfs-driver/
 - name: Ensure common packages are installed
   hosts: all
   become: true
@@ -27,18 +28,18 @@
         - podman-docker
         - containerd
         - runc
-    - name: Setup Docker
+    - name: Docker setup
       block:
-        - name: Docker-Repo | add apt-keyring
+        - name: Docker setup | add apt-keyring
           ansible.builtin.get_url:
             dest: /etc/apt/keyrings/docker.asc
             url: https://download.docker.com/linux/debian/gpg
             mode: "0444"
-        - name: Docker-Repo | add apt-source
+        - name: Docker setup | add apt-source
           ansible.builtin.apt_repository:
             state: present
             repo: "deb [arch={{ [ansible_architecture] | map('extract', deb_architecture) | first }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
-        - name: Docker-Repo | install packages
+        - name: Docker setup | install packages
           ansible.builtin.apt:
             name: "{{ item }}"
             state: present
@@ -49,8 +50,39 @@
             - containerd.io
             - docker-buildx-plugin
             - docker-compose-plugin
-    - name: Add docker supplemental group to caller
-      ansible.builtin.user:
-        name: "{{ lookup('env', 'USER') }}"
-        groups: docker
-        append: true
+        - name: Docker setup | add docker supplemental group to caller
+          ansible.builtin.user:
+            name: "{{ lookup('env', 'USER') }}"
+            groups: docker
+            append: true
+        - name: Docker setup | add storage tools
+          ansible.builtin.apt:
+            name: "{{ item }}"
+            state: present
+            update_cache: true
+            cache_valid_time: 3600
+          # keep fuse3 at the top of the list
+          with_items:
+            - fuse3
+            - lvm2
+            - mdadm
+            - nbd-client
+            - rbd-fuse
+            - rbd-nbd
+            - tgt-rbd
+            - zfs-dkms
+            - zfs-zed
+            - zfsutils-linux
+        - name: Docker setup | add daemon.json
+          vars:
+            source_path: ../files/docker/daemon.json
+          ansible.builtin.copy:
+            src: "{{ source_path }}"
+            dest: /etc/docker/daemon.json
+            mode: '0644'
+          notify: Restart-Docker
+  handlers:
+    - name: Restart-Docker
+      ansible.builtin.service:
+        name: "docker"
+        sate: restarted
