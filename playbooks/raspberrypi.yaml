@@ -20,3 +20,4 @@
         - libraspberrypi0
         - gxemul
         - libbcm2835-dev
+        - raspi-config
