@@ -8,9 +8,10 @@
     - name: Check for AMD gpu
       ansible.builtin.shell: |
         set -o pipefail
-        lshw -json -C display | jq -e '.[] | select(.class == "display") | select(.vendor | contains("Advanced Micro Devices"))'
+        lshw -json -C display | jq -e '.[] | select(.class == "display") | if has("vendor") then select(.vendor | contains("Advanced Micro Devices")) else false end'
       args:
         executable: /usr/bin/bash
+      ignore_errors: true
       register: has_amd_gpu
       changed_when: false
     - name: Setup AMD tools and drivers
