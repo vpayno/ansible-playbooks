@@ -8,9 +8,10 @@
     - name: Check for NVIDIA gpu
       ansible.builtin.shell: |
         set -o pipefail
-        lshw -json -C display | jq -e '.[] | select(.class == "display") | select(.vendor | contains("NVIDIA"))'
+        lshw -json -C display | jq -e '.[] | select(.class == "display") | if has("vendor") then select(.vendor | contains("NVIDIA")) else false end'
       args:
         executable: /usr/bin/bash
+      ignore_errors: true
       register: has_nvidia_gpu
       changed_when: false
     - name: Setup NVIDIA tools and drivers
