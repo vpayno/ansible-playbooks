@@ -85,4 +85,4 @@
     - name: Restart-Docker
       ansible.builtin.service:
         name: "docker"
-        sate: restarted
+        state: restarted
