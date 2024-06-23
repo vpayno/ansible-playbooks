@@ -9,6 +9,8 @@
       ansible.builtin.shell: |
         set -o pipefail
         lshw -json -C display | jq -e '.[] | select(.class == "display") | select(.vendor | contains("Advanced Micro Devices"))'
+      args:
+        executable: /usr/bin/bash
       register: has_amd_gpu
       changed_when: false
     - name: Setup AMD tools and drivers
