@@ -1,0 +1,26 @@
+---
+# Setup Hailo AI
+# https://www.raspberrypi.com/documentation/accessories/ai-kit.html
+- name: Ensure Hailo AI packages are installed
+  hosts: all
+  become: true
+  tasks:
+    - name: Check for Hailo AI co-processor
+      ansible.builtin.shell: |
+        set -o pipefail
+        lshw -json -C processor | jq -e '.[] | select(.class == "processor") | if has("vendor") then select(.vendor | contains("Hailo Technologies Ltd.")) else false end'
+      args:
+        executable: /usr/bin/bash
+      ignore_errors: true
+      register: has_hailo_ai_coproc
+      changed_when: false
+    - name: Setup Hailo AI co-processor tools and drivers
+      when: has_hailo_ai_coproc.rc == 0
+      block:
+        - name: Setup Hailo AI co-processor | install packages
+          ansible.builtin.apt:
+            name: "{{ item }}"
+            state: present
+            update_cache: true
+          with_items:
+            - hailo-all

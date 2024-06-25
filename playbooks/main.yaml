@@ -51,3 +51,7 @@
   ansible.builtin.import_playbook: amd.yaml
   tags:
     - amd
+- name: Hailo AI package install
+  ansible.builtin.import_playbook: hailo.yaml
+  tags:
+    - hailo
