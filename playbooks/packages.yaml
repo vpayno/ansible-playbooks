@@ -244,3 +244,17 @@
         - zfs-dkms
         - zfs-zed
         - zfsutils-linux
+    - name: Install serial tools
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - serial
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+      # keep fuse3 at the top of the list
+      with_items:
+        - picocom
