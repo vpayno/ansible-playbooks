@@ -1,4 +1,8 @@
 ---
+- name: Kernel packages
+  ansible.builtin.import_playbook: kernel.yaml
+  tags:
+    - raspberrypi
 - name: Common packages
   ansible.builtin.import_playbook: packages.yaml
   tags:

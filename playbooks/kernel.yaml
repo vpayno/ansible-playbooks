@@ -1,0 +1,27 @@
+---
+# Ensure the kernel packages and configs are up to date
+- name: Ensure only applicable kernel packages are installed
+  hosts: all
+  become: true
+  tasks:
+    - name: Ensure only needed kernels are installed
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - kernel
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: absent
+        autoremove: true
+        update_cache: true
+        cache_valid_time: 3600
+      when: 'ansible_kernel | regex_search("rpi-2712$")'
+      with_items:
+        - linux-image-*-v8
+        - linux-image-*-arm64
+        - linux-image-v8
+        - linux-image-arm64
+        - linux-headers-*-v8
+        - linux-headers-*-arm64
+      ignore_errors: true
