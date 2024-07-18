@@ -92,6 +92,7 @@
       with_items:
         - aptitude
         - nala
+        - neofetch
         - nix-bin
         - nix-setup-systemd
     - name: Install Ansible tools
