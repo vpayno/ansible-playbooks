@@ -45,6 +45,19 @@
         - ntp
         - ntpdate
         - ntpstat
+    - name: Install dns tools
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - dns
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+      with_items:
+        - bind9-host
     - name: Install terminal screensavers
       tags:
         - packages
