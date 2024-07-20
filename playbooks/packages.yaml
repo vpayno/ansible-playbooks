@@ -272,3 +272,19 @@
       # keep fuse3 at the top of the list
       with_items:
         - picocom
+    - name: Install hardware testing tools
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - hardware
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+      with_items:
+        - stress
+        - stress-ng
+        - spew
+        - memtester
