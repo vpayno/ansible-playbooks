@@ -288,3 +288,19 @@
         - stress-ng
         - spew
         - memtester
+    - name: Install photo tools
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - photo
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+      with_items:
+        - go-mtpfs
+        - gphoto2
+        - gphotofs
+        - httpfs2
