@@ -1,0 +1,90 @@
+---
+# Setup Rust
+# https://www.rust-lang.org/tools/install
+- name: Ensure the latest rust tools are installed
+  hosts: all
+  become: true
+  environment:
+    RUSTUP_HOME: /usr/local/rustup
+    CARGO_HOME: /usr/local/cargo
+    PATH: "{{ ansible_env.CARGO_HOME }}/bin:{{ ansible_env.RUSTUP_HOME }}/bin:{{ ansible_env.PATH }}"
+  vars:
+    deb_architecture:
+      aarch64: "arm64"
+      x86_64: "amd64"
+  tags:
+    - packages
+    - raspberrypi
+    - raspianos
+    - rust
+    - cleanup
+  tasks:
+    - name: Remove old Rust on Debian
+      when: ansible_distribution == "Debian"
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: absent
+        update_cache: true
+      with_items:
+        - rust-all
+        - rust-clippy
+        - rust-coreutils
+        - rust-doc
+        - rust-gdb
+        - rust-lldb
+        - rust-markdown
+        - rust-src
+        - rust-web-clippy
+        - rust-web-doc
+        - rust-web-gdb
+        - rust-web-lldb
+        - rust-web-src
+        - rustc
+        - rustc-web
+        - rustdoc-stripper
+        - rustfilt
+        - rustfmt
+        - rustfmt-web
+        - rusty-tags
+    - name: Install Rust dependencies
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+      with_items:
+        - libssl-dev
+    - name: Add /etc/profile.d/rust.sh
+      ansible.builtin.copy:
+        dest: /etc/profile.d/rust.sh
+        content: |
+          export RUSTUP_HOME="{{ ansible_env.RUSTUP_HOME }}"
+          export CARGO_HOME="{{ ansible_env.CARGO_HOME }}"
+          PATH="${RUSTUP_HOME}/bin:${PATH}"
+          PATH="${CARGO_HOME}/bin:${PATH}"
+        mode: "0644"
+    - name: Download Rust installer
+      ansible.builtin.get_url:
+        dest: /usr/local/sbin/rustup-setup
+        url: https://sh.rustup.rs
+        mode: "0555"
+    - name: Run Rust installer
+      ansible.builtin.command:
+        argv:
+          - /usr/local/sbin/rustup-setup
+          - --default-toolchain
+          - stable
+          - --no-modify-path
+          - -y
+      args:
+        creates: "{{ ansible_env.CARGO_HOME }}/bin/cargo"
+    - name: Ensure cargo packages are installed
+      block:
+        - name: Install speedtest-rs
+          ansible.builtin.command:
+            argv:
+              - cargo
+              - install
+              - speedtest-rs
+          args:
+            creates: "{{ ansible_env.CARGO_HOME }}/bin/speedtest-rs"
