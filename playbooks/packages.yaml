@@ -24,10 +24,11 @@
         update_cache: true
         cache_valid_time: 3600
       with_items:
-        - curl
         - ca-certificates
+        - curl
         - jq
         - jqp
+        - pv
         - xq
         - yq
     - name: Ensure NTP is installed
