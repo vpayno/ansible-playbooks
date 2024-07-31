@@ -1,12 +1,14 @@
 ---
 # Setup Rust
 # https://www.rust-lang.org/tools/install
+# https://doc.rust-lang.org/cargo/reference/environment-variables.html
 - name: Ensure the latest rust tools are installed
   hosts: all
   become: true
   environment:
     RUSTUP_HOME: /usr/local/rustup
     CARGO_HOME: /usr/local/cargo
+    RUSTC_WRAPPER: ""
     PATH: "{{ ansible_env.CARGO_HOME }}/bin:{{ ansible_env.RUSTUP_HOME }}/bin:{{ ansible_env.PATH }}"
   vars:
     deb_architecture:
@@ -80,11 +82,63 @@
         creates: "{{ ansible_env.CARGO_HOME }}/bin/cargo"
     - name: Ensure cargo packages are installed
       block:
-        - name: Install speedtest-rs
+        - name: Install sccache
           ansible.builtin.command:
             argv:
               - cargo
               - install
-              - speedtest-rs
+              - --locked
+              - sccache
           args:
-            creates: "{{ ansible_env.CARGO_HOME }}/bin/speedtest-rs"
+            creates: "{{ ansible_env.CARGO_HOME }}/bin/sccache"
+        - name: Add sccache config to profile
+          ansible.builtin.lineinfile:
+            path: /etc/profile.d/rust.sh
+            regexp: "^RUSTC_WRAPPER=.*$"
+            insertafter: "^PATH=.*$"
+            line: 'RUSTC_WRAPPER="sccache"'
+        - name: Install via cargo part 1
+          ansible.builtin.shell: |
+            cargo install --locked "{{ item }}" || cargo install "{{ item }}"
+          with_items:
+            - bacon
+            - bandwhich
+            - bat
+            - cargo-audit
+            - cargo-chef
+            - cargo-edit
+            - cargo-fix
+            - cargo-fuzz
+            - cargo-generate
+            - cargo-info
+            - cargo-llvm-cov
+            - cargo-make
+            - cargo-outdated
+            - cargo-scaffold
+            - cargo-spellcheck
+            - cargo-upgrades
+            - cargo-vet
+            - cargo-watch
+            - git-cliff
+            - just
+            - nu
+            - release-plz
+            - ripgrep
+            - speedtest-rs
+            - zellij
+            - zoxide
+          environment:
+            RUSTC_WRAPPER: "sccache"
+          args:
+            creates: "{{ ansible_env.CARGO_HOME }}/bin/{{ item }}"
+        - name: Install via cargo part 2
+          ansible.builtin.shell: |
+            cargo install --locked "{{ item.name }}" || cargo install "{{ item.name }}"
+          with_items:
+            - {name: bottom, bin: btm}
+            - {name: typos-cli, bin: typos}
+            - {name: tree-sitter-cli, bin: tree-sitter}
+          environment:
+            RUSTC_WRAPPER: "sccache"
+          args:
+            creates: "{{ ansible_env.CARGO_HOME }}/bin/{{ item.bin }}"
