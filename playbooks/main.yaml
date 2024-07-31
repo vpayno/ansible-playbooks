@@ -47,6 +47,10 @@
   tags:
     - wireguard
     - raspberrypi
+- name: LLVM/Clang package install
+  ansible.builtin.import_playbook: llvm.yaml
+  tags:
+    - llvm
 - name: NVIDIA package install
   ansible.builtin.import_playbook: nvidia.yaml
   tags:
