@@ -49,7 +49,9 @@
             name: "{{ item }}"
             state: present
             update_cache: true
+            install_recommends: true
           with_items:
+            - "llvm-{{ llvm_ver }}-dev"
             - "clang-{{ llvm_ver }}"
             - "clang-{{ llvm_ver }}-doc"
             - "clang-format-{{ llvm_ver }}"
@@ -64,14 +66,12 @@
             - "libclang1-{{ llvm_ver }}"
             - "libclc-{{ llvm_ver }}-dev"
             - "libllvm-{{ llvm_ver }}-ocaml-dev"
-            - "libllvm{{ llvm_ver }}"
             - "libomp-{{ llvm_ver }}-dev"
             - "libpolly-{{ llvm_ver }}-dev"
             - "libunwind-{{ llvm_ver }}-dev"
             - "lld-{{ llvm_ver }}"
             - "lldb-{{ llvm_ver }}"
             - "llvm-{{ llvm_ver }}"
-            - "llvm-{{ llvm_ver }}-dev"
             - "llvm-{{ llvm_ver }}-doc"
             - "llvm-{{ llvm_ver }}-examples"
             - "llvm-{{ llvm_ver }}-runtime"
