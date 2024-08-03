@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+
+if [[ ${UID} -ne 0 ]]; then
+	printf "ERROR: please run this script as root\n"
+	exit 1
+fi
+
+echo source /etc/profile.d/golang.sh
+# shellcheck disable=SC1091
+source /etc/profile.d/golang.sh
+
+declare GOARCH
+if [[ ${HOSTTYPE} == x86_64 ]]; then
+	GOARCH="amd64"
+elif [[ ${HOSTTYPE} == i686 ]]; then
+	GOARCH="i386"
+elif [[ ${HOSTTYPE} == aarch64 ]]; then
+	GOARCH="arm64"
+fi
+
+golang_show_dl_urls() {
+	curl -sS https://go.dev/dl/ | grep 'class="download"' | sed -r -e 's/^.*href="(.*)">.*$/https:\/\/go.dev\1/' | sort -V
+} # golang_show_dl_urls()
+
+golang_show_dl_versions() {
+	golang_show_dl_urls | sed -r -e 's:^.*/go(.*)[.](zip|msi|tar.gz|pkg)$:\1:' | grep '[..]src$' | sed -r -e 's:[.]src::g' | grep -v -E '(beta|rc)' | sort -V
+} # golang_show_dl_versions()
+
+golang_install_latest() {
+	local version
+
+	version="$(golang_show_dl_versions | tail -n 1)"
+
+	printf "Updating installation of Golang to %s for %s\n" "${version}" "${GOARCH}"
+	printf "\n"
+
+	# was `go get golang.org/dl/gox.y.z`
+	echo go install golang.org/dl/go"${version}"@latest
+	time go install golang.org/dl/go"${version}"@latest
+	printf "\n"
+
+	echo go"${version}" download
+	time go"${version}" download
+	printf "\n"
+
+	echo go version
+	go version
+	printf "\n"
+} # golang_install_latest()
+
+golang_first_install() {
+	local GOVER
+
+	GOVER="$(golang_show_dl_versions | tail -n 1)"
+
+	printf "First time installation of Golang %s for %s\n" "${GOVER}" "${GOARCH}"
+	pritf "\n"
+
+	if go version >&/dev/null; then
+		printf "%s is already installed\n" "$(go version)"
+		printf "Use golang_install_latest to update go.\n"
+		return 1
+	fi
+
+	printf "Installing Go version %s...\n\n" "${GOVER}"
+
+	echo curl -sSL https://go.dev/dl/go"${GOVER}".linux-"${GOARCH}".tar.gz '|' tar -C /usr/local/ -xzf -
+	time curl -sSL https://go.dev/dl/go"${GOVER}".linux-"${GOARCH}".tar.gz | tar -C /usr/local/ -xzf - || return 1
+	printf "\n"
+
+	echo mkdir -pv "${GOPATH}"/{bin,pkg,src,sdk}
+	mkdir -pv "${GOPATH}"/{bin,pkg,src,sdk}
+	printf "\n"
+
+	echo ln -sv "${GOPATH}/sdk" "${HOME}/sdk"
+	ln -sv "${GOPATH}/sdk" "${HOME}/sdk"
+	printf "\n"
+
+	echo which go
+	which go
+	printf "\n"
+
+	echo golang_install_latest
+	golang_install_latest
+	printf "\n"
+
+	echo go version
+	go version
+	printf "\n"
+} # golang_first_install()
+
+if [[ -x /usr/local/go/bin/go ]]; then
+	golang_install_latest
+else
+	golang_first_install
+fi

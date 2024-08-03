@@ -1,0 +1,71 @@
+---
+# Setup Golang
+# https://go.dev/doc/install
+# https://go.dev/wiki/GOPATH
+- name: Ensure the latest Golang tools are installed
+  hosts: all
+  become: true
+  environment:
+    GOROOT: "{{ goroot }}"
+    GOPATH: "{{ gopath }}"
+    GOBIN: "{{ gopath }}/bin"
+    GOSRC: "{{ gopath }}/src"
+    PATH: "{{ gopath }}/bin:{{ goroot }}/bin:{{ ansible_env.PATH }}"
+  vars:
+    goroot: /usr/local/go
+    gopath: /usr/local/golang
+    golang_architecture:
+      aarch64: "arm64"
+      x86_64: "amd64"
+  tags:
+    - packages
+    - raspberrypi
+    - raspianos
+    - golang
+    - cleanup
+  tasks:
+    - name: Remove old Golang on Debian
+      when: ansible_distribution == "Debian"
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: absent
+        update_cache: true
+      with_items:
+        - golang
+        - golang-any
+        - golang-go
+        - golang-doc
+        - golang-src
+        - golang-1.19
+        - golang-1.19-doc
+        - golang-1.19-go
+        - golang-1.19-src
+    - name: Install Golang dependencies
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+      with_items:
+        - libssl-dev
+    - name: Add /etc/profile.d/golang.sh
+      ansible.builtin.copy:
+        dest: /etc/profile.d/golang.sh
+        content: |
+          export GOROOT="{{ goroot }}"
+          export GOPATH="{{ gopath }}"
+          export GOBIN="${GOPATH}/bin"
+          export GOSRC="${GOPATH}/src"
+          PATH="${GOPATH}/bin:${GOROOT}/bin:${PATH}"
+        mode: "0644"
+    - name: Install golang installer
+      ansible.builtin.copy:
+        src: "{{ source_path }}"
+        dest: /usr/local/bin/golang-setup
+        mode: "0755"
+      vars:
+        source_path: "../files/installers/golang-setup"
+    - name: Run Golang installer
+      ansible.builtin.command: /usr/local/bin/golang-setup
+      args:
+        creates: "{{ gopath }}/bin/go"

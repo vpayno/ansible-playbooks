@@ -67,3 +67,7 @@
   ansible.builtin.import_playbook: rust.yaml
   tags:
     - rust
+- name: Golang package install
+  ansible.builtin.import_playbook: golang.yaml
+  tags:
+    - golang
