@@ -15,6 +15,11 @@
           ansible.builtin.apt_repository:
             state: present
             repo: "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/stable/debian bookworm main"
+        - name: Tailscale-Repo | create cli repo symlink
+          ansible.builtin.file:
+            state: link
+            src: pkgs_tailscale_com_stable_debian.list
+            dest: /etc/apt/sources.list.d/tailscale.list
         - name: Tailscale-Repo | install packages
           ansible.builtin.apt:
             name: "{{ item }}"
