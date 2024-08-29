@@ -1,5 +1,6 @@
 ---
 # Setup tailscale
+# davfs2 debconf: https://sources.debian.org/src/davfs2/1.7.0-1/debian/templates/
 - name: Ensure tailscale packages are installed
   hosts: all
   become: true
@@ -27,3 +28,30 @@
             update_cache: true
           with_items:
             - tailscale
+    - name: Setup davfs2
+      block:
+        - name: Davfs-Setup | install packages
+          ansible.builtin.apt:
+            name: "{{ item }}"
+            state: present
+            update_cache: true
+          with_items:
+            - davfs2
+        - name: Davfs-Setup | debconf get
+          ansible.builtin.debconf:
+            name: "{{ item }}"
+          with_items:
+            - davfs2
+        - name: Davfs-Setup | debconf set
+          ansible.builtin.debconf:
+            name: "{{ item.pkg }}"
+            question: "{{ item.question }}"
+            vtype: "{{ item.vtype }}"
+            value: "{{ item.answer }}"
+            unseen: false
+          with_items:
+            - {pkg: "davfs2", question: "davfs2/suid_file", vtype: "boolean", answer: false}
+            - {pkg: "davfs2", question: "davfs2/user_name", vtype: "string", answer: "davfs2"}
+            - {pkg: "davfs2", question: "davfs2/group_name", vtype: "string", answer: "davfs2"}
+            - {pkg: "davfs2", question: "davfs2/new_user", vtype: "boolean", answer: true}
+            - {pkg: "davfs2", question: "davfs2/new_group", vtype: "boolean", answer: true}
