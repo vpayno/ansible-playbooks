@@ -4,7 +4,20 @@
   hosts: all
   become: true
   tasks:
-    - name: Ensure common services are enabled
+    - name: Ensure unecessary services are disabled
+      tags:
+        - services
+        - common
+        - raspberrypi
+        - raspianos
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: stopped
+        enabled: false
+        update_cache: true
+      with_items:
+        - udisks
+    - name: Ensure base services are installed
       tags:
         - services
         - common
