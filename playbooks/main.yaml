@@ -47,6 +47,10 @@
   tags:
     - wireguard
     - raspberrypi
+- name: 1password package install
+  ansible.builtin.import_playbook: 1password.yaml
+  tags:
+    - 1password
 - name: LLVM/Clang package install
   ansible.builtin.import_playbook: llvm.yaml
   tags:
