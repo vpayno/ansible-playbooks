@@ -27,7 +27,7 @@
         - name: Tailscale-Repo | install packages
           ansible.builtin.apt:
             name: "{{ item }}"
-            state: present
+            state: latest
             update_cache: true
           with_items:
             - tailscale
