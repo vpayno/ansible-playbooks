@@ -12,15 +12,18 @@
             dest: /usr/share/keyrings/tailscale-archive-keyring.gpg
             url: https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg
             mode: "0444"
+        - name: Tailscale-Repo | remove repo symlink
+          ansible.builtin.file:
+            path: "{{ item }}"
+            state: absent
+          with_items:
+            - /etc/apt/sources.list.d/pkgs_tailscale_com_stable_debian.list
+            - /etc/apt/sources.list.d/tailscale.list
         - name: Tailscale-Repo | add apt-source
           ansible.builtin.apt_repository:
             state: present
             repo: "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/stable/debian bookworm main"
-        - name: Tailscale-Repo | create cli repo symlink
-          ansible.builtin.file:
-            state: link
-            src: pkgs_tailscale_com_stable_debian.list
-            dest: /etc/apt/sources.list.d/tailscale.list
+            filename: tailscale
         - name: Tailscale-Repo | install packages
           ansible.builtin.apt:
             name: "{{ item }}"
