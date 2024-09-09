@@ -27,10 +27,16 @@
         - name: Tailscale-Repo | install packages
           ansible.builtin.apt:
             name: "{{ item }}"
-            state: latest
+            state: present
             update_cache: true
           with_items:
             - tailscale
+    - name: Tailscale update
+      ansible.builtin.command:
+      args:
+        cmd: "tailscale update"
+      register: output
+      changed_when: "'already running stable version' not in output.stdout"
     - name: Setup davfs2
       block:
         - name: Davfs-Setup | install packages
