@@ -16,6 +16,10 @@
         enabled: false
       with_items:
         - udisks
+      register: output
+      failed_when:
+        - output.failed == true
+        - "'Could not find the requested service' not in output.msg"
     - name: Ensure base services are installed
       tags:
         - services
