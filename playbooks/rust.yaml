@@ -65,11 +65,16 @@
           PATH="${RUSTUP_HOME}/bin:${PATH}"
           PATH="${CARGO_HOME}/bin:${PATH}"
         mode: "0644"
+    - name: Initial Rust setup
+      ansible.builtin.stat:
+        path: /usr/local/cargo/bin/rustup
+      register: rustup_stat
     - name: Download Rust installer
       ansible.builtin.get_url:
         dest: /usr/local/sbin/rustup-setup
         url: https://sh.rustup.rs
         mode: "0555"
+      when: not rustup_stat.stat.exists
     - name: Run Rust installer
       ansible.builtin.command:
         argv:
@@ -80,6 +85,23 @@
           - -y
       args:
         creates: "{{ ansible_env.CARGO_HOME }}/bin/cargo"
+      when: not rustup_stat.stat.exists
+    - name: Current Rust version
+      ansible.builtin.command:
+        argv:
+          - rustc
+          - --version
+      register: rust_version_old
+      when: rustup_stat.stat.exists
+      changed_when: false
+    - name: Update Rust
+      ansible.builtin.command:
+        argv:
+          - rustup
+          - update
+      when: rustup_stat.stat.exists
+      register: rustup_update
+      changed_when: rust_version_old.stdout not in rustup_update.stdout
     - name: Ensure cargo packages are installed
       block:
         - name: Install sccache
