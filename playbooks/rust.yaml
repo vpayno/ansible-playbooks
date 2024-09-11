@@ -123,12 +123,20 @@
           ansible.builtin.shell: |
             cargo install --locked "{{ item }}" || cargo install "{{ item }}"
           with_items:
+            - cargo-edit
+          environment:
+            RUSTC_WRAPPER: "sccache"
+          args:
+            creates: "{{ ansible_env.CARGO_HOME }}/bin/{{ item }}"
+        - name: Install via cargo part 2
+          ansible.builtin.shell: |
+            cargo install --locked "{{ item }}" || cargo install "{{ item }}"
+          with_items:
             - bacon
             - bandwhich
             - bat
             - cargo-audit
             - cargo-chef
-            - cargo-edit
             - cargo-fix
             - cargo-fuzz
             - cargo-generate
@@ -152,7 +160,7 @@
             RUSTC_WRAPPER: "sccache"
           args:
             creates: "{{ ansible_env.CARGO_HOME }}/bin/{{ item }}"
-        - name: Install via cargo part 2
+        - name: Install via cargo part 3
           ansible.builtin.shell: |
             cargo install --locked "{{ item.name }}" || cargo install "{{ item.name }}"
           with_items:
