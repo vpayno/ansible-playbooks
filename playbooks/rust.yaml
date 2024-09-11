@@ -111,8 +111,8 @@
               - install
               - --locked
               - sccache
-          args:
-            creates: "{{ ansible_env.CARGO_HOME }}/bin/sccache"
+          register: sccache_version
+          changed_when: not "Ignored package" in sccache_version.stdout
         - name: Add sccache config to profile
           ansible.builtin.lineinfile:
             path: /etc/profile.d/rust.sh
@@ -126,8 +126,8 @@
             - cargo-edit
           environment:
             RUSTC_WRAPPER: "sccache"
-          args:
-            creates: "{{ ansible_env.CARGO_HOME }}/bin/{{ item }}"
+          register: output
+          changed_when: not "Ignored package" in output.stdout
         - name: Install via cargo part 2
           ansible.builtin.shell: |
             cargo install --locked "{{ item }}" || cargo install "{{ item }}"
@@ -158,8 +158,8 @@
             - zoxide
           environment:
             RUSTC_WRAPPER: "sccache"
-          args:
-            creates: "{{ ansible_env.CARGO_HOME }}/bin/{{ item }}"
+          register: output
+          changed_when: not "Ignored package" in output.stdout
         - name: Install via cargo part 3
           ansible.builtin.shell: |
             cargo install --locked "{{ item.name }}" || cargo install "{{ item.name }}"
