@@ -145,7 +145,6 @@
             - just
             - nu
             - release-plz
-            - ripgrep
             - speedtest-rs
             - zellij
             - zoxide
@@ -158,8 +157,9 @@
             cargo install --locked "{{ item.name }}" || cargo install "{{ item.name }}"
           with_items:
             - {name: bottom, bin: btm}
-            - {name: typos-cli, bin: typos}
+            - {name: ripgrep, bin: rg}
             - {name: tree-sitter-cli, bin: tree-sitter}
+            - {name: typos-cli, bin: typos}
           environment:
             RUSTC_WRAPPER: "sccache"
           args:
