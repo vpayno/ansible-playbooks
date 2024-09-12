@@ -135,11 +135,14 @@
     - name: Ensure cargo packages are installed
       block:
         - name: Install sccache
+          environment:
+            RUSTC_WRAPPER: ""
           ansible.builtin.command:
             argv:
               - cargo
               - install
               - --locked
+              - --all-features
               - sccache
           register: sccache_version
           changed_when: not "Ignored package" in sccache_version.stdout

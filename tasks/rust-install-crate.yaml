@@ -2,6 +2,6 @@
 # task used to install a single rust crate
 - name: rust-install-crate | "cargo install {{ item }}"
   ansible.builtin.shell: |
-    cargo install --locked "{{ item }}" || cargo install "{{ item }}"
+    cargo install --locked --all-features "{{ item }}" || cargo install "{{ item }}"
   register: output
   changed_when: not "Ignored package" in output.stdout
