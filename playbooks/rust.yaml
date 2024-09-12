@@ -14,6 +14,36 @@
     deb_architecture:
       aarch64: "arm64"
       x86_64: "amd64"
+    crates:
+      - bacon
+      - bandwhich
+      - bat
+      - bottom
+      - cargo-audit
+      - cargo-chef
+      - cargo-edit
+      - cargo-fix
+      - cargo-fuzz
+      - cargo-generate
+      - cargo-info
+      - cargo-llvm-cov
+      - cargo-make
+      - cargo-outdated
+      - cargo-scaffold
+      - cargo-spellcheck
+      - cargo-upgrades
+      - cargo-vet
+      - cargo-watch
+      - git-cliff
+      - just
+      - nu
+      - release-plz
+      - ripgrep
+      - speedtest-rs
+      - tree-sitter-cli
+      - typos-cli
+      - zellij
+      - zoxide
   tags:
     - packages
     - raspberrypi
@@ -119,56 +149,10 @@
             regexp: "^RUSTC_WRAPPER=.*$"
             insertafter: "^PATH=.*$"
             line: 'RUSTC_WRAPPER="sccache"'
-        - name: Install via cargo part 1
-          ansible.builtin.shell: |
-            cargo install --locked "{{ item }}" || cargo install "{{ item }}"
-          with_items:
-            - cargo-edit
-          environment:
-            RUSTC_WRAPPER: "sccache"
-          register: output
-          changed_when: not "Ignored package" in output.stdout
-        - name: Install via cargo part 2
-          ansible.builtin.shell: |
-            cargo install --locked "{{ item }}" || cargo install "{{ item }}"
-          with_items:
-            - bacon
-            - bandwhich
-            - bat
-            - cargo-audit
-            - cargo-chef
-            - cargo-fix
-            - cargo-fuzz
-            - cargo-generate
-            - cargo-info
-            - cargo-llvm-cov
-            - cargo-make
-            - cargo-outdated
-            - cargo-scaffold
-            - cargo-spellcheck
-            - cargo-upgrades
-            - cargo-vet
-            - cargo-watch
-            - git-cliff
-            - just
-            - nu
-            - release-plz
-            - speedtest-rs
-            - zellij
-            - zoxide
-          environment:
-            RUSTC_WRAPPER: "sccache"
-          register: output
-          changed_when: not "Ignored package" in output.stdout
-        - name: Install via cargo part 3
-          ansible.builtin.shell: |
-            cargo install --locked "{{ item.name }}" || cargo install "{{ item.name }}"
-          with_items:
-            - {name: bottom, bin: btm}
-            - {name: ripgrep, bin: rg}
-            - {name: tree-sitter-cli, bin: tree-sitter}
-            - {name: typos-cli, bin: typos}
-          environment:
-            RUSTC_WRAPPER: "sccache"
+        - name: Install via cargo
+          ansible.builtin.include_tasks: ../tasks/rust-install-crate.yaml
           args:
-            creates: "{{ ansible_env.CARGO_HOME }}/bin/{{ item.bin }}"
+            apply:
+              environment:
+                RUSTC_WRAPPER: "sccache"
+          loop: "{{ crates }}"
