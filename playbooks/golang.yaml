@@ -78,85 +78,87 @@
         source_path: "../files/bin/go"
     - name: Ensure golang packages are installed
       block:
-        - name: Install via golang part
-          ansible.builtin.command: go install "{{ item.url }}@latest"
+        - name: Install tools via golang
+          ansible.builtin.command: go install "{{ item }}@latest"
           with_items:
-            - {url: github.com/AlekSi/gocov-xml, bin: gocov-xml}
-            - {url: github.com/BurntSushi/go-sumtype, bin: go-sumtype}
-            - {url: github.com/GoogleCloudPlatform/govanityurls, bin: govanityurls}
-            - {url: github.com/appliedgocode/goman, bin: goman}
-            - {url: github.com/axw/gocov/gocov, bin: gocov}
-            - {url: github.com/bwplotka/bingo, bin: bingo}
-            - {url: github.com/charmbracelet/gum, bin: gum}
-            - {url: github.com/client9/misspell/cmd/misspell, bin: misspell}
-            - {url: github.com/create-go-app/cli/v3/cmd/cgapp, bin: cgapp}
-            - {url: github.com/daixiang0/gci, bin: gci}
-            - {url: github.com/dave/courtney, bin: courtney}
-            - {url: github.com/davidrjenni/reftools/cmd/fillstruct, bin: fillstruct}
-            - {url: github.com/davidrjenni/reftools/cmd/fillswitch, bin: fillswitch}
-            - {url: github.com/davidrjenni/reftools/cmd/fixplurals, bin: fixplurals}
-            - {url: github.com/dundee/gdu/v5/cmd/gdu, bin: gdu}
-            - {url: github.com/fatih/gomodifytags, bin: gomodifytags}
-            - {url: github.com/fatih/motion, bin: motion}
-            - {url: github.com/foxboron/sbctl/cmd/sbctl, bin: sbctl}
-            - {url: github.com/fzipp/gocyclo/cmd/gocyclo, bin: gocyclo}
-            - {url: github.com/get-woke/woke, bin: woke}
-            - {url: github.com/go-critic/go-critic/cmd/gocritic, bin: gocritic}
-            - {url: github.com/go-delve/delve/cmd/dlv, bin: dlv}
-            - {url: github.com/godoctor/godoctor, bin: godoctor}
-            - {url: github.com/gokrazy/tools/cmd/gok, bin: gok}
-            - {url: github.com/golangci/golangci-lint/cmd/golangci-lint, bin: golangci-lint}
-            - {url: github.com/google/go-licenses, bin: go-licenses}
-            - {url: github.com/google/wire/cmd/wire, bin: wire}
-            - {url: github.com/google/yamlfmt/cmd/yamlfmt, bin: yamlfmt}
-            - {url: github.com/gordonklaus/ineffassign, bin: ineffassign}
-            - {url: github.com/goreleaser/goreleaser, bin: goreleaser}
-            - {url: github.com/govim/govim/cmd/govim, bin: govim}
-            - {url: github.com/grafana/jsonnet-language-server, bin: jsonnet-language-server}
-            - {url: github.com/haya14busa/goplay/cmd/goplay, bin: goplay}
-            - {url: github.com/jandelgado/gcov2lcov, bin: gcov2lcov}
-            - {url: github.com/jesseduffield/lazygit, bin: lazygit}
-            - {url: github.com/josharian/impl, bin: impl}
-            - {url: github.com/jstemmer/gotags, bin: gotags}
-            - {url: github.com/kisielk/errcheck, bin: errcheck}
-            - {url: github.com/klauspost/asmfmt/cmd/asmfmt, bin: asmfmt}
-            - {url: github.com/koron/iferr, bin: iferr}
-            - {url: github.com/magefile/mage, bin: mage}
-            - {url: github.com/maruel/panicparse/v2/cmd/pp, bin: pp}
-            - {url: github.com/mattn/goveralls, bin: goveralls}
-            - {url: github.com/mgechev/revive, bin: revive}
-            - {url: github.com/motemen/go-iferr/cmd/goiferr, bin: goiferr}
-            - {url: github.com/pelletier/go-toml/v2/cmd/jsontoml, bin: jsontoml}
-            - {url: github.com/pelletier/go-toml/v2/cmd/tomljson, bin: tomljson}
-            - {url: github.com/pelletier/go-toml/v2/cmd/tomll, bin: tomll}
-            - {url: github.com/princjef/gomarkdoc/cmd/gomarkdoc, bin: gomarkdoc}
-            - {url: github.com/quasilyte/go-consistent, bin: go-consistent}
-            - {url: github.com/rakyll/gotest, bin: gotest}
-            - {url: github.com/ramya-rao-a/go-outline, bin: go-outline}
-            - {url: github.com/remotemobprogramming/mob/v3, bin: mob}
-            - {url: github.com/rhysd/actionlint/cmd/actionlint, bin: actionlint}
-            - {url: github.com/rogpeppe/godef, bin: godef}
-            - {url: github.com/schmichael/gostack/cmd/gstack, bin: gstack}
-            - {url: github.com/securego/gosec/v2/cmd/gosec, bin: gosec}
-            - {url: github.com/securego/gosec/v2/cmd/gosecutil, bin: gosecutil}
-            - {url: github.com/securego/gosec/v2/cmd/tlsconfig, bin: tlsconfig}
-            - {url: github.com/segmentio/golines, bin: golines}
-            - {url: github.com/spf13/cobra-cli, bin: cobra-cli}
-            - {url: github.com/sqs/goreturns, bin: goreturns}
-            - {url: github.com/t-yuki/gocover-cobertura, bin: gocover-cobertura}
-            - {url: github.com/viktomas/godu, bin: godu}
-            - {url: golang.org/x/lint/golint, bin: golint}
-            - {url: golang.org/x/perf/cmd/benchstat, bin: benchstat}
-            - {url: golang.org/x/tools/cmd/cover, bin: cover}
-            - {url: golang.org/x/tools/cmd/present, bin: present}
-            - {url: golang.org/x/tools/gopls, bin: gopls}
-            - {url: golang.org/x/vuln/cmd/govulncheck, bin: govulncheck}
-            - {url: google.golang.org/grpc/cmd/protoc-gen-go-grpc, bin: protoc-gen-go-grpc}
-            - {url: google.golang.org/protobuf/cmd/protoc-gen-go, bin: protoc-gen-go}
-            - {url: honnef.co/go/tools/cmd/keyify, bin: keyify}
-            - {url: honnef.co/go/tools/cmd/staticcheck, bin: staticcheck}
-            - {url: mvdan.cc/garble, bin: garble}
-            - {url: mvdan.cc/gofumpt, bin: gofumpt}
-            - {url: mvdan.cc/sh/v3/cmd/shfmt, bin: shfmt}
-          args:
-            creates: "{{ ansible_env.GOPATH }}/bin/{{ item.bin }}"
+            - github.com/AlekSi/gocov-xml
+            - github.com/BurntSushi/go-sumtype
+            - github.com/GoogleCloudPlatform/govanityurls
+            - github.com/appliedgocode/goman
+            - github.com/axw/gocov/gocov
+            - github.com/bwplotka/bingo
+            - github.com/charmbracelet/gum
+            - github.com/client9/misspell/cmd/misspell
+            - github.com/create-go-app/cli/v3/cmd/cgapp
+            - github.com/daixiang0/gci
+            - github.com/dave/courtney
+            - github.com/davidrjenni/reftools/cmd/fillstruct
+            - github.com/davidrjenni/reftools/cmd/fillswitch
+            - github.com/davidrjenni/reftools/cmd/fixplurals
+            - github.com/dundee/gdu/v5/cmd/gdu
+            - github.com/fatih/gomodifytags
+            - github.com/fatih/motion
+            - github.com/foxboron/sbctl/cmd/sbctl
+            - github.com/fzipp/gocyclo/cmd/gocyclo
+            - github.com/get-woke/woke
+            - github.com/go-critic/go-critic/cmd/gocritic
+            - github.com/go-delve/delve/cmd/dlv
+            - github.com/godoctor/godoctor
+            - github.com/gokrazy/tools/cmd/gok
+            - github.com/golangci/golangci-lint/cmd/golangci-lint
+            - github.com/google/go-licenses
+            - github.com/google/wire/cmd/wire
+            - github.com/google/yamlfmt/cmd/yamlfmt
+            - github.com/gordonklaus/ineffassign
+            - github.com/goreleaser/goreleaser
+            - github.com/govim/govim/cmd/govim
+            - github.com/grafana/jsonnet-language-server
+            - github.com/haya14busa/goplay/cmd/goplay
+            - github.com/jandelgado/gcov2lcov
+            - github.com/jesseduffield/lazygit
+            - github.com/josharian/impl
+            - github.com/jstemmer/gotags
+            - github.com/kisielk/errcheck
+            - github.com/klauspost/asmfmt/cmd/asmfmt
+            - github.com/koron/iferr
+            - github.com/magefile/mage
+            - github.com/maruel/panicparse/v2/cmd/pp
+            - github.com/mattn/goveralls
+            - github.com/mgechev/revive
+            - github.com/motemen/go-iferr/cmd/goiferr
+            - github.com/pelletier/go-toml/v2/cmd/jsontoml
+            - github.com/pelletier/go-toml/v2/cmd/tomljson
+            - github.com/pelletier/go-toml/v2/cmd/tomll
+            - github.com/princjef/gomarkdoc/cmd/gomarkdoc
+            - github.com/quasilyte/go-consistent
+            - github.com/rakyll/gotest
+            - github.com/ramya-rao-a/go-outline
+            - github.com/remotemobprogramming/mob/v3
+            - github.com/rhysd/actionlint/cmd/actionlint
+            - github.com/rogpeppe/godef
+            - github.com/schmichael/gostack/cmd/gstack
+            - github.com/securego/gosec/v2/cmd/gosec
+            - github.com/securego/gosec/v2/cmd/gosecutil
+            - github.com/securego/gosec/v2/cmd/tlsconfig
+            - github.com/segmentio/golines
+            - github.com/spf13/cobra-cli
+            - github.com/sqs/goreturns
+            - github.com/t-yuki/gocover-cobertura
+            - github.com/viktomas/godu
+            - golang.org/x/lint/golint
+            - golang.org/x/perf/cmd/benchstat
+            - golang.org/x/tools/cmd/cover
+            - golang.org/x/tools/cmd/present
+            - golang.org/x/tools/gopls
+            - golang.org/x/vuln/cmd/govulncheck
+            - google.golang.org/grpc/cmd/protoc-gen-go-grpc
+            - google.golang.org/protobuf/cmd/protoc-gen-go
+            - honnef.co/go/tools/cmd/staticcheck
+            - honnef.co/go/tools/cmd/structlayout
+            - honnef.co/go/tools/cmd/structlayout-optimize
+            - honnef.co/go/tools/cmd/structlayout-pretty
+            - mvdan.cc/garble
+            - mvdan.cc/gofumpt
+            - mvdan.cc/sh/v3/cmd/shfmt
+          register: output
+          changed_when: "'go: downloading' in output.stderr"
