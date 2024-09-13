@@ -1,0 +1,11 @@
+#!/bin/bash
+
+go() {
+	# shellcheck disable=SC1091
+	source /etc/profile.d/golang.sh
+
+	# shellcheck disable=SC2012
+	exec "$(ls "${GOBIN}"/go[0-9][.]* -v | sort | tail -n 1)" "$@"
+} # go()
+
+go "$@"

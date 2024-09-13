@@ -69,6 +69,13 @@
       ansible.builtin.command: /usr/local/bin/golang-setup
       args:
         creates: "{{ gopath }}/bin/go"
+    - name: Add /usr/local/golang/bin/go
+      ansible.builtin.copy:
+        src: "{{ source_path }}"
+        dest: /usr/local/golang/bin/go
+        mode: "0755"
+      vars:
+        source_path: "../files/bin/go"
     - name: Ensure golang packages are installed
       block:
         - name: Install via golang part
