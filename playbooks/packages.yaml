@@ -150,9 +150,34 @@
         cache_valid_time: 3600
       with_items:
         - alacritty
-        - i3
         - dmenu
+        - i3
+        - i3blocks
+        - i3lock
+        - i3lock-fancy
+        - i3pystatus
+        - i3status
+        - rofi
+        - rr
         - suckless-tools
+        - variety
+    - name: Install Wayland tools
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - X-tools
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+      with_items:
+        - flameshot
+        - grim
+        - grimshot
+        - imv
+        - slurp
         - sway
         - sway-backgrounds
         - sway-notification-center
@@ -163,19 +188,31 @@
         - swaylock
         - tofi
         - waybar
-        - wdisplays
-        - wlsunset
-        - wofi
-        - grimshot
-        - wayfire
         - waybar
+        - waybar
+        - wayfire
+        - wayfire
         - wayland-protocols
         - wayland-scanner++
         - wayland-utils
         - wayout
         - waypipe
+        - waypipe
         - wayvnc
+        - wayvnc
+        - wdisplays
+        - wdisplays
+        - wl-clipboard
         - wlopm
+        - wlsunset
+        - wlsunset
+        - wob
+        - wofi
+        - wofi-pass
+        - wtype
+        - xwayland
+        - yambar
+        - ydotoold
     - name: Install hardware tools
       tags:
         - packages
