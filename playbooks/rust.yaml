@@ -6,14 +6,16 @@
   hosts: all
   become: true
   environment:
-    RUSTUP_HOME: /usr/local/rustup
-    CARGO_HOME: /usr/local/cargo
+    RUSTUP_HOME: "{{ rustup_home }}"
+    CARGO_HOME: "{{ cargo_home }}"
     RUSTC_WRAPPER: ""
-    PATH: "{{ ansible_env.CARGO_HOME }}/bin:{{ ansible_env.RUSTUP_HOME }}/bin:{{ ansible_env.PATH }}"
+    PATH: "{{ ansible_env.PATH }}:{{ cargo_home }}/bin:{{ rustup_home }}/bin"
   vars:
     deb_architecture:
       aarch64: "arm64"
       x86_64: "amd64"
+    cargo_home: "/usr/local/cargo"
+    rustup_home: "/usr/local/rustup"
     crates:
       - bacon
       - bandwhich
