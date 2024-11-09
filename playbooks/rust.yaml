@@ -139,13 +139,14 @@
         - name: Install sccache
           environment:
             RUSTC_WRAPPER: ""
-          ansible.builtin.command:
-            argv:
-              - cargo
-              - install
-              - --locked
-              - --all-features
-              - sccache
+          ansible.builtin.shell: |
+            if command -v sccache &> /dev/null; then
+              export RUSTC_WRAPPER="sccache"
+            fi
+            cargo install --locked --all-features sccache ||
+              cargo install --all-features sccache ||
+              cargo install --locked sccache ||
+              cargo install sccache
           register: sccache_version
           changed_when: not "Ignored package" in sccache_version.stdout
         - name: Add sccache config to profile
