@@ -337,3 +337,28 @@
         - gphoto2
         - gphotofs
         - httpfs2
+    - name: Install file tools
+      tags:
+        - packages
+        - raspberrypi
+        - raspianos
+        - fileutils
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+      with_items:
+        - cpplint
+        - dos2unix
+        - jq
+        - jsonlint
+        - moreutils
+        - shellcheck
+        - xml2
+        - xmldiff
+        - xmlindent
+        - xmlstarlet
+        - xq
+        - yamllint
+        - yq
