@@ -362,3 +362,50 @@
         - xq
         - yamllint
         - yq
+- name: Install Wikiman
+  hosts: all
+  become: true
+  tags:
+    - packages
+    - raspberrypi
+    - raspianos
+    - wikiman
+  tasks:
+    - name: Gather package facts
+      ansible.builtin.package_facts:
+        manager: apt
+    - name: Get latest Wikiman version
+      register: wikiman_outofdate
+      changed_when: '"wikiman" in ansible_facts.get("packages", [])'
+      ansible.builtin.shell: |
+        set -o pipefail
+        if ! command -v wikiman >& /dev/null; then
+            printf "%s" "true"
+            exit 0
+        fi
+        latest_version="$(curl -sS https://api.github.com/repos/filiparag/wikiman/releases/latest | jq -r '.tag_name' | sed -r -e 's:^v::g')"
+        current_version="$(dpkg -l wikiman |& awk '/\swikiman\s/ { print $3 }')"
+        if [[ ${current_version} == ${latest_version} ]]; then
+          printf "%s" "false"
+        else
+          printf "%s" "true"
+        fi
+      args:
+        executable: /usr/bin/bash
+    - name: Get Wikiman download URLs
+      when: (wikiman_outofdate.stdout | bool) and (ansible_architecture == "x86_64" or ansible_architecture == "aarch64")
+      ansible.builtin.shell: |
+        set -o pipefail
+        deb_arch=any
+        curl -sS https://api.github.com/repos/filiparag/wikiman/releases/latest \
+            | jq -r '.assets | .[] | select(.name|test("[.]deb$")) | .browser_download_url' \
+            | grep -- "-${deb_arch}.deb"
+      args:
+        executable: /usr/bin/bash
+      register: deb_wikiman_url
+      changed_when: "'wikiman' in deb_wikiman_url.stdout"
+    - name: Install Wikiman dep package
+      when: (wikiman_outofdate.stdout | bool) and (ansible_architecture == "x86_64" or ansible_architecture == "aarch64")
+      ansible.builtin.apt:
+        state: present
+        deb: "{{ deb_wikiman_url.stdout }}"
