@@ -75,3 +75,7 @@
   ansible.builtin.import_playbook: golang.yaml
   tags:
     - golang
+- name: Nix package manager install
+  ansible.builtin.import_playbook: nix.yaml
+  tags:
+    - nix

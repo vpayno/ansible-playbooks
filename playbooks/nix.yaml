@@ -1,0 +1,28 @@
+---
+# Setup Nix - https://nix.dev/install-nix.html
+# Uninstall Nix - https://nix.dev/manual/nix/2.18/installation/uninstall
+# Note: using the version from apt (/usr/bin/nix) instead.
+# TODO: Need to figure out how to tell when it's outdated so it gets updated.
+- name: Download Nix installer and run it
+  hosts: all
+  become: true
+  tasks:
+    - name: Is Nix already installed?
+      ansible.builtin.stat:
+        path: /usr/bin/nix
+      register: result
+    - name: Install Nix package manager
+      when: not result.stat.exists
+      block:
+        - name: Download Nix installer
+          ansible.builtin.get_url:
+            dest: /usr/local/sbin/nix-install
+            url: https://nixos.org/nix/install
+            checksum: "sha256:eab8df9342b4e75a5cc4fc3e7de5b41fee70c51f981aeaa2761bd1ba993ef54e0d08099025bfa6321ce8b7fa2c928016aca4d46d1fdeb75020a40dc3a1ee8aa0"
+            mode: "0550"
+        - name: Run Nix installer
+          environment:
+            BIN_DIR: /usr/local/bin
+          ansible.builtin.command: /usr/local/sbin/nix-install --daemon --yes
+          args:
+            creates: /usr/local/bin/nix
