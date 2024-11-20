@@ -1,0 +1,7 @@
+---
+# task used to install a single rust crate via git repo
+- name: rust-install-crate-via-git | cargo install --git "{{ item.url }}" "{{ item.binaries }}"  # noqa name[casing] name[template]
+  ansible.builtin.shell: |
+    cargo install --locked --all-features --git "{{ item.url }}" "{{ item.binaries }}" || cargo install --git "{{ item }}" "{{ item.binaries }}"
+  register: output
+  changed_when: not "Ignored package" in output.stdout

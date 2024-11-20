@@ -1,6 +1,6 @@
 ---
-# task used to install a single rust crate
-- name: rust-install-crate | "cargo install {{ item }}"
+# task used to install a single rust crate from crates.io
+- name: rust-install-crate | cargo install "{{ item }}"  # noqa name[casing]
   ansible.builtin.shell: |
     cargo install --locked --all-features "{{ item }}" || cargo install "{{ item }}"
   register: output

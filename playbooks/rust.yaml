@@ -46,6 +46,9 @@
       - typos-cli
       - zellij
       - zoxide
+    crates_git:
+      - {url:"https://github.com/tealdeer-rs/tealdeer", binaries:""}
+      - {url:"https://github.com/astral-sh/uv", binaries:"uv"}
   tags:
     - packages
     - raspberrypi
@@ -162,3 +165,10 @@
               environment:
                 RUSTC_WRAPPER: "sccache"
           loop: "{{ crates }}"
+        - name: Install via cargo using git
+          ansible.builtin.include_tasks: ../tasks/rust-install-crate-via-git.yaml
+          args:
+            apply:
+              environment:
+                RUSTC_WRAPPER: "sccache"
+          loop: "{{ crates_git }}"
