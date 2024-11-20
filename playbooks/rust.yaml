@@ -47,8 +47,8 @@
       - zellij
       - zoxide
     crates_git:
-      - {url:"https://github.com/tealdeer-rs/tealdeer", binaries:""}
-      - {url:"https://github.com/astral-sh/uv", binaries:"uv"}
+      - {url: "https://github.com/tealdeer-rs/tealdeer", binaries: ""}
+      - {url: "https://github.com/astral-sh/uv", binaries: "uv"}
   tags:
     - packages
     - raspberrypi
