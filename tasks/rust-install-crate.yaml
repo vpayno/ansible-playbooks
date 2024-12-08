@@ -1,7 +1,13 @@
 ---
 # task used to install a single rust crate from crates.io
 - name: rust-install-crate | cargo install "{{ item }}"  # noqa name[casing]
+  environment:
+    crate_name: "{{ item }}"
+    CARGO_TARGET_DIR: "target"
   ansible.builtin.shell: |
-    cargo install --locked --all-features "{{ item }}" || cargo install "{{ item }}"
+    printf "crate_name: %s\n" "${crate_name}"
+    set -x
+    cargo install "{{ item }}" ||
+      cargo install "{{ item }}" --locked
   register: output
   changed_when: not "Ignored package" in output.stdout

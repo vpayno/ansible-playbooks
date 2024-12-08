@@ -47,8 +47,9 @@
       - zellij
       - zoxide
     crates_git:
-      - {url: "https://github.com/tealdeer-rs/tealdeer", binaries: ""}
-      - {url: "https://github.com/astral-sh/uv", binaries: "uv"}
+      - {url: "https://github.com/astral-sh/uv", binaries: "uv", extra_flags: "", failure_ok: true}
+      - {url: "https://github.com/oxalica/nil", binaries: "nil", extra_flags: ""}
+      - {url: "https://github.com/tealdeer-rs/tealdeer", binaries: "tealdeer", extra_flags: ""}
   tags:
     - packages
     - raspberrypi
@@ -146,10 +147,7 @@
             if command -v sccache &> /dev/null; then
               export RUSTC_WRAPPER="sccache"
             fi
-            cargo install --locked --all-features sccache ||
-              cargo install --all-features sccache ||
-              cargo install --locked sccache ||
-              cargo install sccache
+            cargo install sccache
           register: sccache_version
           changed_when: not "Ignored package" in sccache_version.stdout
         - name: Add sccache config to profile
