@@ -1,28 +1,219 @@
 ---
 # Setup Nix - https://nix.dev/install-nix.html
 # Uninstall Nix - https://nix.dev/manual/nix/2.18/installation/uninstall
-# Note: using the version from apt (/usr/bin/nix) instead.
+# Note: the version from apt install to /usr/bin/nix and sets the socket to root:root
 # TODO: Need to figure out how to tell when it's outdated so it gets updated.
 - name: Download Nix installer and run it
   hosts: all
   become: true
   tasks:
+    - name: Install package managers
+      tags:
+        - nix-apt-uninstall
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: absent
+        update_cache: false
+      with_items:
+        - nix-bin
+        - nix-setup-systemd
     - name: Is Nix already installed?
-      ansible.builtin.stat:
-        path: /usr/bin/nix
+      ansible.builtin.shell: |
+        . /etc/profile.d/nix.sh
+        which nix
+      ignore_errors: true
       register: result
-    - name: Install Nix package manager
-      when: not result.stat.exists
+      tags:
+        - nix-check-installed
+    - name: Clean up Apt's nix installation
+      when: result.failed
       block:
-        - name: Download Nix installer
+        - name: Clean up Apt's nix installation | Clean up nixbld users
+          ansible.builtin.user:
+            name: "{{ item }}"
+            state: absent
+            remove: false
+          with_items:
+            - nixbld1
+            - nixbld2
+            - nixbld3
+            - nixbld4
+            - nixbld5
+            - nixbld6
+            - nixbld7
+            - nixbld8
+            - nixbld9
+            - nixbld10
+            - nixbld11
+            - nixbld12
+            - nixbld13
+            - nixbld14
+            - nixbld15
+            - nixbld16
+            - nixbld17
+            - nixbld18
+            - nixbld19
+            - nixbld20
+            - nixbld21
+            - nixbld22
+            - nixbld23
+            - nixbld24
+            - nixbld25
+            - nixbld26
+            - nixbld27
+            - nixbld28
+            - nixbld29
+            - nixbld30
+            - nixbld31
+            - nixbld32
+        - name: Clean up Apt's nix installation | Clean up nixbld groups
+          ansible.builtin.group:
+            name: "{{ item }}"
+            state: absent
+          with_items:
+            - nixbld
+            - nix-users
+        - name: Clean up Apt's nix installation | Restore old /etc/bashrc file
+          block:
+            - name: Clean up Apt's nix installation | Restore old /etc/bash.bashrc file | Does file exist?
+              ansible.builtin.stat:
+                path: /etc/profile.d/nix.sh.backup-before-nix
+              register: result1
+              ignore_errors: true
+            - name: Clean up Apt's nix installation | Restore old /etc/profile.d/nix.sh file | Restore file
+              when: result1.stat.exists
+              ansible.builtin.copy:
+                src: /etc/profile.d/nix.sh.backup-before-nix
+                dest: /etc/profile.d/nix.sh
+                remote_src: true
+                force: true
+            - name: Clean up Apt's nix installation | Restore old /etc/bash.bashrc file | Does file exist?
+              ansible.builtin.stat:
+                path: /etc/bash.bashrc.backup-before-nix
+              register: result1
+              ignore_errors: true
+            - name: Clean up Apt's nix installation | Restore old /etc/bash.bashrc file | Restore file
+              when: result1.stat.exists
+              ansible.builtin.copy:
+                src: /etc/bash.bashrc.backup-before-nix
+                dest: /etc/bash.bashrc
+                remote_src: true
+                force: true
+            - name: Clean up Apt's nix installation | Restore old /etc/bashrc file | Does file exist?
+              ansible.builtin.stat:
+                path: /etc/bashrc.backup-before-nix
+              register: result2
+              ignore_errors: true
+            - name: Clean up Apt's nix installation | Restore old /etc/bashrc file | Restore file
+              when: result2.stat.exists
+              ansible.builtin.copy:
+                src: /etc/bashrc.backup-before-nix
+                dest: /etc/bashrc
+                remote_src: true
+                force: true
+        - name: Clean up Apt's nix installation | Restore old /etc/zshrc file
+          block:
+            - name: Clean up Apt's nix installation | Restore old /etc/zshrc file | Does file exist?
+              ansible.builtin.stat:
+                path: /etc/zshrc.backup-before-nix
+              register: result2
+              ignore_errors: true
+            - name: Clean up Apt's nix installation | Restore old /etc/zshrc file | Restore file
+              when: result2.stat.exists
+              ansible.builtin.copy:
+                src: /etc/zshrc.backup-before-nix
+                dest: /etc/zshrc
+                remote_src: true
+                force: true
+        - name: Clean up Apt's nix installation | Clean up nix services
+          block:
+            - name: Clean up Apt's nix installation | Clean up nix services | Does service exist?
+              ansible.builtin.stat:
+                path: /etc/systemd/system/nix-daemon.service
+              register: result1
+              ignore_errors: true
+            - name: Clean up Apt's nix installation | Clean up nix services | Remove service
+              when: result1.stat.exists
+              ansible.builtin.systemd_service:
+                name: nix-daemon.service
+                state: stopped
+                enabled: false
+            - name: Clean up Apt's nix installation | Clean up nix services | Does service exist?
+              ansible.builtin.stat:
+                path: /etc/systemd/system/nix-daemon.socket
+              register: result1
+              ignore_errors: true
+            - name: Clean up Apt's nix installation | Clean up nix services | Remove service
+              when: result1.stat.exists
+              ansible.builtin.systemd_service:
+                name: nix-daemon.socket
+                state: stopped
+                enabled: false
+        - name: Clean up Apt's nix installation | Clean up nix files and directories
+          ansible.builtin.file:
+            name: "{{ item }}"
+            state: absent
+          with_items:
+            - /nix
+            - /etc/nix
+            - /etc/bash.bashrc.backup-before-nix
+            - /etc/bashrc.backup-before-nix
+            - /etc/zshrc.backup-before-nix
+            - /etc/systemd/system/nix-daemon.service
+            - /etc/systemd/system/nix-daemon.socket
+            - /root/.nix-profile
+            - /root/.nix-channels
+            - /root/.nix-defexpr
+            - /usr/local/bin/nix
+    - name: Install Nix package manager
+      when: result.failed
+      block:
+        - name: Install Nix package manager | Download Nix installer
           ansible.builtin.get_url:
             dest: /usr/local/sbin/nix-install
             url: https://nixos.org/nix/install
-            checksum: "sha256:eab8df9342b4e75a5cc4fc3e7de5b41fee70c51f981aeaa2761bd1ba993ef54e0d08099025bfa6321ce8b7fa2c928016aca4d46d1fdeb75020a40dc3a1ee8aa0"
+            checksum: "sha512:7d7821b9537d6b4aea3b471dd76d3e635b330085348c117a73bc71f5b47e8fb6c84d24c1dc53014ca8607f6732a398788115d9bc08baf0af7337b0ef985a4060"
             mode: "0550"
-        - name: Run Nix installer
+        - name: Install Nix package manager | Run Nix installer
           environment:
             BIN_DIR: /usr/local/bin
           ansible.builtin.command: /usr/local/sbin/nix-install --daemon --yes
           args:
             creates: /usr/local/bin/nix
+    - name: Create nix-users group
+      ansible.builtin.group:
+        name: nix-users
+        state: present
+    - name: Add users to nix-users group
+      ansible.builtin.user:
+        name: "{{ item }}"
+        groups: nix-users
+        append: true
+      with_items:
+        - "{{ lookup('env', 'USER') }}"
+    - name: Add users to nix-users group
+      ansible.builtin.file:
+        path: /nix/var/nix/daemon-socket/
+        state: directory
+        owner: root
+        group: nix-users
+        mode: '0770'
+    - name: Update nix configuration
+      block:
+        - name: Update nix env
+          ansible.builtin.shell: |-
+            . /etc/profile.d/nix.sh
+            nix-env -iA nixpkgs.glibcLocales
+        - name: Add /etc/profile.d/golang.sh
+          ansible.builtin.copy:
+            dest: /etc/profile.d/zz-nix-locale.sh
+            content: |
+              export LOCALE_ARCHIVE="$(nix-env --installed --no-name --out-path --query glibc-locales)/lib/locale/locale-archive"
+            mode: "0644"
+        - name: Add /etc/nix/nix.conf
+          ansible.builtin.copy:
+            dest: /etc/nix/nix.conf
+            content: |
+              build-users-group = nixbld
+              experimental-features = nix-command flakes
+            mode: "0644"
