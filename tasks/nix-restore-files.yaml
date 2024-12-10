@@ -1,0 +1,19 @@
+---
+# task used to check if a nix backup file exists and restore it
+- name: nix-restore-files | Does backup file exist? "{{ item.src }}"
+  ansible.builtin.stat:
+    path: "{{ item.src }}"
+  register: result
+  ignore_errors: true
+- name: nix-restore-files | Restore backup file "{{ item.src }}"
+  when: result.stat.exists
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dst }}"
+    mode: "{{ item.mode | default('0644') }}"
+    remote_src: true
+    force: true
+- name: nix-restore-files | Delete backup file "{{ item.src }}"
+  ansible.builtin.file:
+    name: "{{ item.src }}"
+    state: absent

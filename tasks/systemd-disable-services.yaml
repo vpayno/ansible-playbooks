@@ -1,0 +1,13 @@
+---
+# task used to check if a nix service file exists and stops it and disables it
+- name: systemd-disable-services | Does service exist? "{{ item }}"
+  ansible.builtin.stat:
+    path: "/etc/systemd/system/{{ item }}"
+  register: result
+  ignore_errors: true
+- name: systemd-disable-services | Stop and disable service "{{ item }}"
+  when: result.stat.exists
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false

@@ -6,6 +6,15 @@
 - name: Download Nix installer and run it
   hosts: all
   become: true
+  vars:
+    nix_profile_files:
+      - {src: "/etc/bash.bashrc.backup-before-nix", dst: "/etc/bash.bashrc"}
+      - {src: "/etc/bashrc.backup-before-nix", dst: "/etc/bashrc"}
+      - {src: "/etc/profile.d/nix.sh.backup-before-nix", dst: "/etc/profile.d/nix.sh"}
+      - {src: "/etc/zshrc.backup-before-nix", dst: "/etc/zshrc"}
+    nix_services:
+      - nix-daemon.service
+      - nix-daemon.socket
   tasks:
     - name: Install package managers
       tags:
@@ -19,14 +28,14 @@
         - nix-setup-systemd
     - name: Is Nix already installed?
       ansible.builtin.shell: |
-        . /etc/profile.d/nix.sh
+        [ -f /etc/profile.d/nix.sh ] &&. /etc/profile.d/nix.sh
         which nix
       ignore_errors: true
-      register: result
+      register: nix_found
       tags:
         - nix-check-installed
     - name: Clean up Apt's nix installation
-      when: result.failed
+      when: nix_found.failed
       block:
         - name: Clean up Apt's nix installation | Clean up nixbld users
           ansible.builtin.user:
@@ -73,82 +82,12 @@
           with_items:
             - nixbld
             - nix-users
-        - name: Clean up Apt's nix installation | Restore old /etc/bashrc file
-          block:
-            - name: Clean up Apt's nix installation | Restore old /etc/bash.bashrc file | Does file exist?
-              ansible.builtin.stat:
-                path: /etc/profile.d/nix.sh.backup-before-nix
-              register: result1
-              ignore_errors: true
-            - name: Clean up Apt's nix installation | Restore old /etc/profile.d/nix.sh file | Restore file
-              when: result1.stat.exists
-              ansible.builtin.copy:
-                src: /etc/profile.d/nix.sh.backup-before-nix
-                dest: /etc/profile.d/nix.sh
-                remote_src: true
-                force: true
-            - name: Clean up Apt's nix installation | Restore old /etc/bash.bashrc file | Does file exist?
-              ansible.builtin.stat:
-                path: /etc/bash.bashrc.backup-before-nix
-              register: result1
-              ignore_errors: true
-            - name: Clean up Apt's nix installation | Restore old /etc/bash.bashrc file | Restore file
-              when: result1.stat.exists
-              ansible.builtin.copy:
-                src: /etc/bash.bashrc.backup-before-nix
-                dest: /etc/bash.bashrc
-                remote_src: true
-                force: true
-            - name: Clean up Apt's nix installation | Restore old /etc/bashrc file | Does file exist?
-              ansible.builtin.stat:
-                path: /etc/bashrc.backup-before-nix
-              register: result2
-              ignore_errors: true
-            - name: Clean up Apt's nix installation | Restore old /etc/bashrc file | Restore file
-              when: result2.stat.exists
-              ansible.builtin.copy:
-                src: /etc/bashrc.backup-before-nix
-                dest: /etc/bashrc
-                remote_src: true
-                force: true
-        - name: Clean up Apt's nix installation | Restore old /etc/zshrc file
-          block:
-            - name: Clean up Apt's nix installation | Restore old /etc/zshrc file | Does file exist?
-              ansible.builtin.stat:
-                path: /etc/zshrc.backup-before-nix
-              register: result2
-              ignore_errors: true
-            - name: Clean up Apt's nix installation | Restore old /etc/zshrc file | Restore file
-              when: result2.stat.exists
-              ansible.builtin.copy:
-                src: /etc/zshrc.backup-before-nix
-                dest: /etc/zshrc
-                remote_src: true
-                force: true
+        - name: Clean up Apt's nix installation | Restore /etc/*.backup-before-nix files
+          ansible.builtin.include_tasks: ../tasks/nix-restore-files.yaml
+          loop: "{{ nix_profile_files }}"
         - name: Clean up Apt's nix installation | Clean up nix services
-          block:
-            - name: Clean up Apt's nix installation | Clean up nix services | Does service exist?
-              ansible.builtin.stat:
-                path: /etc/systemd/system/nix-daemon.service
-              register: result1
-              ignore_errors: true
-            - name: Clean up Apt's nix installation | Clean up nix services | Remove service
-              when: result1.stat.exists
-              ansible.builtin.systemd_service:
-                name: nix-daemon.service
-                state: stopped
-                enabled: false
-            - name: Clean up Apt's nix installation | Clean up nix services | Does service exist?
-              ansible.builtin.stat:
-                path: /etc/systemd/system/nix-daemon.socket
-              register: result1
-              ignore_errors: true
-            - name: Clean up Apt's nix installation | Clean up nix services | Remove service
-              when: result1.stat.exists
-              ansible.builtin.systemd_service:
-                name: nix-daemon.socket
-                state: stopped
-                enabled: false
+          ansible.builtin.include_tasks: ../tasks/systemd-disable-services.yaml
+          loop: "{{ nix_services }}"
         - name: Clean up Apt's nix installation | Clean up nix files and directories
           ansible.builtin.file:
             name: "{{ item }}"
@@ -156,9 +95,6 @@
           with_items:
             - /nix
             - /etc/nix
-            - /etc/bash.bashrc.backup-before-nix
-            - /etc/bashrc.backup-before-nix
-            - /etc/zshrc.backup-before-nix
             - /etc/systemd/system/nix-daemon.service
             - /etc/systemd/system/nix-daemon.socket
             - /root/.nix-profile
@@ -166,7 +102,7 @@
             - /root/.nix-defexpr
             - /usr/local/bin/nix
     - name: Install Nix package manager
-      when: result.failed
+      when: nix_found.failed
       block:
         - name: Install Nix package manager | Download Nix installer
           ansible.builtin.get_url:
