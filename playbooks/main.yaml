@@ -3,79 +3,97 @@
   ansible.builtin.import_playbook: kernel.yaml
   tags:
     - raspberrypi
+    - main.kernel
 - name: Common packages
   ansible.builtin.import_playbook: packages.yaml
   tags:
     - raspberrypi
+    - main.common
 - name: Common services
   ansible.builtin.import_playbook: services.yaml
   tags:
     - raspberrypi
+    - main.services
 - name: User settings
   ansible.builtin.import_playbook: user-settings.yaml
   tags:
     - user
     - raspberrypi
+    - main.user
 - name: Nix package manager install
   ansible.builtin.import_playbook: nix.yaml
   tags:
     - nix
+    - main.nix
 - name: Docker on Debian
   when: ansible_distribution == "Debian" and ansible_distribution_release == "bookworm"
   ansible.builtin.import_playbook: docker.yaml
   tags:
     - docker
     - raspberrypi
+    - main.docker
 - name: VM Tools
   when: ansible_distribution == "Debian" and ansible_distribution_release == "bookworm"
   ansible.builtin.import_playbook: vms.yaml
   tags:
     - vms
     - raspberrypi
+    - main.vms
 - name: Dagger install
   ansible.builtin.import_playbook: dagger.yaml
   tags:
     - dagger
     - raspberrypi
+    - main.dagger
 - name: RunMe install
   ansible.builtin.import_playbook: runme.yaml
   tags:
     - runme
     - raspberrypi
+    - main.runme
 - name: RaspberryPi package install
   ansible.builtin.import_playbook: raspberrypi.yaml
   tags:
     - raspberrypi
+    - main.rpi
 - name: Tailscale package install
   ansible.builtin.import_playbook: tailscale.yaml
   tags:
     - wireguard
     - raspberrypi
+    - main.tailscale
 - name: 1password package install
   ansible.builtin.import_playbook: 1password.yaml
   tags:
     - 1password
+    - main.1password
 - name: LLVM/Clang package install
   ansible.builtin.import_playbook: llvm.yaml
   tags:
     - llvm
+    - main.llvm
 - name: NVIDIA package install
   ansible.builtin.import_playbook: nvidia.yaml
   tags:
     - nvidia
+    - main.nvidia
 - name: AMD package install
   ansible.builtin.import_playbook: amd.yaml
   tags:
     - amd
+    - main.amd
 - name: Hailo AI package install
   ansible.builtin.import_playbook: hailo.yaml
   tags:
     - hailo
+    - main.hailo
 - name: Rust package install
   ansible.builtin.import_playbook: rust.yaml
   tags:
     - rust
+    - main.rust
 - name: Golang package install
   ansible.builtin.import_playbook: golang.yaml
   tags:
     - golang
+    - main.go
