@@ -137,14 +137,17 @@
     - name: Update nix configuration
       block:
         - name: Update nix env
-          ansible.builtin.shell: |-
+          ansible.builtin.shell: |
             . /etc/profile.d/nix.sh
-            nix-env -iA nixpkgs.glibcLocales
+            nix profile install nixpkgs#glibcLocales
         - name: Add /etc/profile.d/golang.sh
           ansible.builtin.copy:
             dest: /etc/profile.d/zz-nix-locale.sh
             content: |
-              export LOCALE_ARCHIVE="$(nix-env --installed --no-name --out-path --query glibc-locales)/lib/locale/locale-archive"
+              if ! nix-store --query --requisites /nix/var/nix/profiles/default/ | cut -d- -f2- | sort -u | grep -q '^glibc-locales'; then
+                nix profile install nixpkgs#glibcLocales
+              fi
+              export LOCALE_ARCHIVE="/nix/var/nix/profiles/default/lib/locale/locale-archive"
             mode: "0644"
         - name: Add /etc/nix/nix.conf
           ansible.builtin.copy:
