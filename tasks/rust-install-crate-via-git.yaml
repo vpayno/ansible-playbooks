@@ -5,6 +5,7 @@
   ansible.builtin.shell: |
     printf "url: %s\n" "{{ item.url }}"
     printf "binaries: %s\n" "{{ item.binaries }}"
+    source /etc/profile.d/nix.sh
     set -x
     cargo install --git "{{ item.url }}" "{{ item.binaries }}" $(printf "%s " "{{ item.extra_flags }}") ||
       cargo install --git "{{ item.url }}" "{{ item.binaries }}" $(printf "%s " "{{ item.extra_flags }}") --locked

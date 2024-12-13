@@ -6,6 +6,7 @@
     CARGO_TARGET_DIR: "target"
   ansible.builtin.shell: |
     printf "crate_name: %s\n" "${crate_name}"
+    source /etc/profile.d/nix.sh
     set -x
     cargo install "{{ item }}" ||
       cargo install "{{ item }}" --locked
