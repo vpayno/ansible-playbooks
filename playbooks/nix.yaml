@@ -32,6 +32,7 @@
         which nix
       ignore_errors: true
       register: nix_found
+      changed_when: false
       tags:
         - nix-check-installed
     - name: Clean up Apt's nix installation
