@@ -140,7 +140,9 @@
         - name: Update nix env
           ansible.builtin.shell: |
             . /etc/profile.d/nix.sh
-            nix profile install nixpkgs#glibcLocales
+            nix profile --verbose install nixpkgs#glibcLocales
+          register: output
+          changed_when: not "is already installed" in output.stderr
         - name: Add /etc/profile.d/golang.sh
           ansible.builtin.copy:
             dest: /etc/profile.d/zz-nix-locale.sh
