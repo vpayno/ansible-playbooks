@@ -74,6 +74,7 @@ commit_parsers = [
   { message = "^conf", group = "<!-- 11 -->🗂 Config" },
   { message = "^devcontainer", group = "<!-- 12 -->🧰 Dev Container" },
   { message = "^ansible", group = "<!-- 13 -->🅰 Ansible" },
+  { message = "^devbox", group = "<!-- 14 -->🅳 Devbox" },
 ]
 # protect breaking changes from being skipped due to matching a skipping commit_parser
 protect_breaking_commits = false
