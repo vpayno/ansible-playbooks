@@ -1,15 +1,71 @@
 {
-    "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.7/.schema/devbox.schema.json",
-    "packages": [],
-    "shell": {
-      "init_hook": [
-        "echo 'Welcome to devbox!' > /dev/null"
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.7/.schema/devbox.schema.json",
+  "packages": [
+    "actionlint@latest",
+    "ansible-builder@latest",
+    "ansible-cmdb@latest",
+    "ansible-doctor@latest",
+    "ansible-language-server@latest",
+    "ansible-lint@latest",
+    "ansible-navigator@latest",
+    "aspell@latest",
+    "aspellDicts.en@latest",
+    "cargo-info@latest",
+    "cargo-spellcheck@latest",
+    "cargo@latest",
+    "commitlint@latest",
+    "gh@latest",
+    "git-cliff@latest",
+    "git@latest",
+    "glab@latest",
+    "glow@latest",
+    "go@latest",
+    "jaq@latest",
+    "jq@latest",
+    "lychee@latest",
+    "markdownlint-cli@latest",
+    "proselint@latest",
+    "pyright@latest",
+    "python312Packages.ansible@latest",
+    "python@3.12",
+    "ruff-lsp@latest",
+    "ruff@latest",
+    "runme@latest",
+    "rustc@latest",
+    "shellcheck@latest",
+    "shfmt@latest",
+    "yaml-language-server@latest",
+    "yamlfix@latest",
+    "yamllint@latest",
+    "yq-go@latest",
+    "glibcLocales@latest"
+  ],
+  "shell": {
+    "init_hook": [
+      "go install github.com/get-woke/woke@latest",
+      "go install github.com/client9/misspell/cmd/misspell@latest",
+      ". $VENV_DIR/bin/activate",
+      "pip install --upgrade pyspelling"
+    ],
+    "scripts": {
+      "actionlint": [
+        "actionlint .github/workflows/*yaml"
       ],
-      "scripts": {
-        "test": [
-          "echo \"Error: no test specified\" && exit 1"
-        ]
-      }
+      "format": [
+        "yamlfix --config-file ./.yamlfix.toml ./.github/ ./playbooks/ ./tasks/ ./templates/ ./files/ ./tools/"
+      ],
+      "lint": [
+        "yamllint --config-file ./.yamllint.yaml ./.github/ ./playbooks/ ./tasks/ ./files/ ./tools/"
+      ],
+      "mdlint": [
+        "markdownlint --ignore-path ./.gitignore ."
+      ],
+      "spellcheck": [
+        "misspell ./*md ./playbooks/* ./tasks/* ./files/* ./tools/*"
+      ],
+      "test": [
+        "ansible-lint ./playbooks/ ./tasks/ ./templates/ ./files/ ./tools/"
+      ]
     }
   }
-  
+}
