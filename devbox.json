@@ -42,8 +42,9 @@
   ],
   "shell": {
     "init_hook": [
-      "go install github.com/get-woke/woke@latest",
       "go install github.com/client9/misspell/cmd/misspell@latest",
+      "go install github.com/get-woke/woke@latest",
+      "go install github.com/keewek/ansible-pretty-print@latest",
       ". $VENV_DIR/bin/activate",
       "pip install --upgrade pyspelling"
     ],
