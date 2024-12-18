@@ -4,7 +4,7 @@
   hosts: all
   become: true
   tasks:
-    - name: Ensure unecessary services are disabled
+    - name: Ensure unnecessary services are disabled
       tags:
         - services
         - common
