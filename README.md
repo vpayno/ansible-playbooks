@@ -22,7 +22,9 @@ If you don't have RunMe installed, you'll need to copy/paste the command. :)
 go install github.com/stateful/runme/v3@v3
 ```
 
-Setup command auto-completion:
+You can also install `runme` with the command `devbox add runme` and run it with `devbox run runme`.
+
+### Setup command auto-completion
 
 ```bash { background=false category=runme closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=setup-runme-autocompletion promptEnv=true terminalRows=10 }
 if [[ -d ~/.bash_libs.d ]]; then
@@ -35,13 +37,16 @@ else
 fi
 ```
 
-Install Playbook dependencies:
+### Install Playbook dependencies
 
 ```bash { background=false category=runme closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=setup-runme-deps promptEnv=true terminalRows=10 }
 go install github.com/keewek/ansible-pretty-print@latest
 go install github.com/charmbracelet/gum@latest
 go install github.com/mikefarah/yq/v4@latest
+go install github.com/charmbracelet/glow@latest
 ```
+
+These commands are now deprecated in favor of using `devbox` instead.
 
 ## Dev Container
 
@@ -49,14 +54,64 @@ This project has a dev-container to make it easier to run ansible commands from 
 it just needs [Docker](https://docs.docker.com/engine/install/)
 and the [Dev Container CLI](https://github.com/devcontainers/cli) installed to get setup to run ansible playbooks.
 
-To install the Dev Containers CLI:
+Note: deprecated in favor of using `devbox` instead.
 
-```bash { background=false category=devcontainer closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=devcontainer-install promptEnv=true terminalRows=10 }
-npm install -g @devcontainers/cli
+## Devbox
+
+Benefits over dev containers?
+
+- Tooling is less complicated.
+- It's also easier/faster to make changes and "redeploy".
+- Easy way to start learning Nix!
+- Sets up a Python virtualenv in the root of the project that you can use to install packages with pip when they aren't available in Nix or for local/private dependencies you haven't added a flake.nix file to.
+
+### Devbox Help
+
+- use `devbox search name` to search for packages
+- use `devbox info name` to show the info for a package
+- use `devbox add name` to add a package to the shell
+- use `devbox update` to update the lock file and environemnt
+- use `devbox shell` to start the `nix-shell`
+- use `devbox run command` to run a command inside the `nix-shell`
+
+### Running CI commands
+
+To run `ansible-lint` to lint the ansible files:
+
+```bash { name=ci-01-ansible-lint }
+devbox run test
 ```
 
-The rest of the Dev Container notes are located in [DEVCONTAINER.md](./DEVCONTAINER.md).
+To run `actionlint` to check the GitHub workflow files:
+
+```bash { name=ci-02-action-lint }
+devbox run actionlint
+```
+
+To run `yamlfix` to format yaml files:
+
+```bash { name=ci-03-format-yaml }
+devbox run format
+```
+
+To run `misspell` to spellcheck files:
+
+```bash { name=ci-04-spellcheck }
+devbox run spellcheck
+```
+
+To run `markdownlint` to lint markdown files:
+
+```bash { name=ci-05-md-lint }
+devbox run mdlint
+```
 
 ## Ansible
 
 The Ansible notes are located in the file [ANSIBLE.md](./ANSIBLE.md).
+
+To run ansible playbooks run:
+
+```bash
+devbox run ansible-playbook playbooks/main.yaml --limit=host
+```
