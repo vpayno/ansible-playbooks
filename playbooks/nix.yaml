@@ -157,5 +157,6 @@
             dest: /etc/nix/nix.conf
             content: |
               build-users-group = nixbld
-              experimental-features = nix-command flakes
+              experimental-features = nix-command flakes ca-derivations cgroups fetch-closure
+              trusted-users = root {{ lookup('env', 'USER') }}
             mode: "0644"
