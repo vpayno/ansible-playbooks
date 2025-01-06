@@ -152,11 +152,9 @@
               fi
               export LOCALE_ARCHIVE="/nix/var/nix/profiles/default/lib/locale/locale-archive"
             mode: "0644"
-        - name: Add /etc/nix/nix.conf
-          ansible.builtin.copy:
-            dest: /etc/nix/nix.conf
-            content: |
-              build-users-group = nixbld
-              experimental-features = nix-command flakes ca-derivations cgroups fetch-closure
-              trusted-users = root {{ lookup('env', 'USER') }}
-            mode: "0644"
+        - name: Manage with nix system manager
+          ansible.builtin.shell: |
+            [[ -L /etc/nix/nix.conf ]] ||  mv -v /etc/nix/nix.conf{,~}
+            [[ -L /etc/systemd/system/nix-daemon.service ]] || mv -v /etc/systemd/system/nix-daemon.service{,~}
+            nix --extra-experimental-features 'nix-command flakes' run 'github:numtide/system-manager' -- switch --flake 'https://github.com/vpayno/homelab-nix-on-raspian'
+          changed_when: true
