@@ -137,24 +137,42 @@
         mode: '0770'
     - name: Update nix configuration
       block:
-        - name: Update nix env
-          ansible.builtin.shell: |
-            . /etc/profile.d/nix.sh
-            nix profile --verbose install nixpkgs#glibcLocales
-          register: output
-          changed_when: not "is already installed" in output.stderr
         - name: Add /etc/profile.d/golang.sh
           ansible.builtin.copy:
             dest: /etc/profile.d/zz-nix-locale.sh
             content: |
-              if ! nix-store --query --requisites /nix/var/nix/profiles/default/ | cut -d- -f2- | sort -u | grep -q '^glibc-locales'; then
-                nix profile install nixpkgs#glibcLocales
+              if [ -f /etc/nix/nix.conf ]; then
+                if ! nix-store --query --requisites /nix/var/nix/profiles/default/ | cut -d- -f2- | sort -u | grep -q '^glibc-locales'; then
+                  nix profile install nixpkgs#glibcLocales
+                fi
+                export LOCALE_ARCHIVE="/nix/var/nix/profiles/default/lib/locale/locale-archive"
               fi
-              export LOCALE_ARCHIVE="/nix/var/nix/profiles/default/lib/locale/locale-archive"
-            mode: "0644"
+              if [ -f /usr/lib/locale/locale-archive ]; then
+                export LOCALE_ARCHIVE=/usr/lib/locale/locale-archive
+              fi
+            mode: "0655"
+        - name: Add System Nix to Path
+          ansible.builtin.copy:
+            dest: /etc/profile.d/zzz-nix-system.sh
+            content: "PATH=/nix/var/nix/profiles/default/bin:${PATH}"
+            mode: "0655"
+          when: ansible_env.PATH is not search("/nix/var/nix/profiles/default/bin")
+        - name: Add Root Nix to Path
+          ansible.builtin.copy:
+            dest: /etc/profile.d/zzz-nix-root.sh
+            content: "PATH=/root/.nix-profile/bin:${PATH}"
+            mode: "0655"
+          when: ansible_env.PATH is not search("/root/.nix-profile/bin")
         - name: Manage with nix system manager
           ansible.builtin.shell: |
-            [[ -L /etc/nix/nix.conf ]] ||  mv -v /etc/nix/nix.conf{,~}
-            [[ -L /etc/systemd/system/nix-daemon.service ]] || mv -v /etc/systemd/system/nix-daemon.service{,~}
-            nix --extra-experimental-features 'nix-command flakes' run 'github:numtide/system-manager' -- switch --flake 'https://github.com/vpayno/homelab-nix-on-raspian'
+            . /etc/profile.d/zz-nix-locale.sh
+            . /etc/profile.d/zzz-nix-system.sh
+            . /etc/profile.d/zzz-nix-root.sh
+            [ -L /etc/nix/nix.conf ] ||  mv -v /etc/nix/nix.conf /etc/nix/nix.conf~
+            [ -L /etc/systemd/system/nix-daemon.service ] || mv -v /etc/systemd/system/nix-daemon.service /etc/systemd/system/nix-daemon.service~
+            cd /root/
+            [ -d homelab-nix-on-raspian ] || git clone https://github.com/vpayno/homelab-nix-on-raspian
+            cd homelab-nix-on-raspian
+            git pull
+            nix --extra-experimental-features 'nix-command flakes' run 'github:numtide/system-manager' -- switch --flake '.'
           changed_when: true
