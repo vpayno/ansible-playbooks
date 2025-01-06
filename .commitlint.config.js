@@ -21,6 +21,7 @@ module.exports = {
             2,
             'always',
             [
+                'ansible',
                 'build',
                 'chore',
                 'ci',
@@ -30,6 +31,7 @@ module.exports = {
                 'feat',
                 'fix',
                 'perf',
+                'playbook',
                 'refactor',
                 'release',
                 'revert',
@@ -112,6 +114,16 @@ module.exports = {
                         description: 'Devbox configuration',
                         title: 'Devbox',
                         emoji: '🅳',
+                    },
+                    playbook: {
+                        description: 'Ansible playbook',
+                        title: 'Ansible',
+                        emoji: '🅰',
+                    },
+                    ansible: {
+                        description: 'Ansible configuration',
+                        title: 'Ansible',
+                        emoji: '🅰',
                     },
                 },
             },
