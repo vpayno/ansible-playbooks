@@ -115,3 +115,17 @@ To run ansible playbooks run:
 ```bash
 devbox run ansible-playbook playbooks/main.yaml --limit=host
 ```
+
+## Notes
+
+### Duplicate ipv6 addresses issue on systemd hosts
+
+After cloning a `systemd` host, you need to run the following commands on the
+clone to fix the duplicate ipv6 address collision issue:
+
+```bash { name=fix-systemd-ipv6-collision }
+cat /etc/machine-id
+rm -fv /etc/machine-id
+systemd-machine-id-setup
+cat /etc/machine-id
+```
