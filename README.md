@@ -22,7 +22,8 @@ If you don't have RunMe installed, you'll need to copy/paste the command. :)
 go install github.com/stateful/runme/v3@v3
 ```
 
-You can also install `runme` with the command `devbox add runme` and run it with `devbox run runme`.
+You can also install `runme` with the command `devbox add runme` and run it with
+`devbox run runme`.
 
 ### Setup command auto-completion
 
@@ -50,9 +51,10 @@ These commands are now deprecated in favor of using `devbox` instead.
 
 ## Dev Container
 
-This project has a dev-container to make it easier to run ansible commands from any workstation,
-it just needs [Docker](https://docs.docker.com/engine/install/)
-and the [Dev Container CLI](https://github.com/devcontainers/cli) installed to get setup to run ansible playbooks.
+This project has a dev-container to make it easier to run ansible commands from
+any workstation, it just needs [Docker](https://docs.docker.com/engine/install/)
+and the [Dev Container CLI](https://github.com/devcontainers/cli) installed to
+get setup to run ansible playbooks.
 
 Note: deprecated in favor of using `devbox` instead.
 
@@ -63,7 +65,9 @@ Benefits over dev containers?
 - Tooling is less complicated.
 - It's also easier/faster to make changes and "redeploy".
 - Easy way to start learning Nix!
-- Sets up a Python virtualenv in the root of the project that you can use to install packages with pip when they aren't available in Nix or for local/private dependencies you haven't added a flake.nix file to.
+- Sets up a Python virtualenv in the root of the project that you can use to
+  install packages with pip when they aren't available in Nix or for
+  local/private dependencies you haven't added a flake.nix file to.
 
 ### Devbox Help
 
