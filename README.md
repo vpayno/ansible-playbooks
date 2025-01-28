@@ -134,3 +134,5 @@ systemd-machine-id-setup  # generates random number
 cat /etc/machine-id
 reboot
 ```
+
+Note to self: remove `/etc/machine-id` from source host before cloning.
