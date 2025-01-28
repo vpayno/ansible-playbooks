@@ -130,6 +130,7 @@ clone to fix the duplicate ipv6 address collision issue:
 ```bash { name=fix-systemd-ipv6-collision }
 cat /etc/machine-id
 rm -fv /etc/machine-id
-systemd-machine-id-setup
+systemd-machine-id-setup  # generates random number
 cat /etc/machine-id
+reboot
 ```
