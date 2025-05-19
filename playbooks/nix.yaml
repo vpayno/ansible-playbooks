@@ -150,6 +150,8 @@
               if [ -f /usr/lib/locale/locale-archive ]; then
                 export LOCALE_ARCHIVE=/usr/lib/locale/locale-archive
               fi
+
+              export LOCALE_ARCHIVE="$(nix profile list | grep glibcLocales | tail -n 1 | cut -d ' ' -f 4)/lib/locale/locale-archive"
             mode: "0655"
         - name: Add System Nix to Path
           ansible.builtin.copy:
