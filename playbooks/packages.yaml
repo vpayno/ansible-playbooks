@@ -11,7 +11,7 @@
         cache_valid_time: 3600
         autoremove: false
         # http://raphaelhertzog.com/2010/09/21/debian-conffile-configuration-file-managed-by-dpkg/
-        dpkg_options: 'force-confold,force-confdef'
+        dpkg_options: "force-confold,force-confdef"
     - name: Ensure base dependencies are installed
       tags:
         - packages

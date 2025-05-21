@@ -3,7 +3,7 @@
 # .github/workflows/ansible.yaml
 #
 name: ansible
-on:  # yamllint disable-line rule:truthy
+on: # yamllint disable-line rule:truthy
   push:
     branches:
       - main
@@ -18,7 +18,7 @@ defaults:
 jobs:
   stage1:
     name: Change Check
-    runs-on: 'ubuntu-latest'
+    runs-on: "ubuntu-latest"
     outputs:
       docs_changed: ${{ steps.check_file_changed.outputs.docs_changed }}
     steps:

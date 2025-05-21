@@ -4,7 +4,7 @@
 #
 # https://github.com/reviewdog/action-actionlint
 name: actionlint
-on:  # yamllint disable-line rule:truthy
+on: # yamllint disable-line rule:truthy
   push:
     branches:
       - main
@@ -23,7 +23,7 @@ defaults:
 jobs:
   stage1:
     name: Change Check
-    runs-on: 'ubuntu-latest'
+    runs-on: "ubuntu-latest"
     outputs:
       docs_changed: ${{ steps.check_file_changed.outputs.docs_changed }}
     steps:
@@ -74,7 +74,7 @@ jobs:
       - name: Set up Go (using latest version)
         uses: actions/setup-go@v5
         with:
-          go-version: 'stable'
+          go-version: "stable"
       - name: Show Go version
         run: |
           go version

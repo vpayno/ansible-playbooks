@@ -24,4 +24,4 @@
         - linux-image-arm64
         - linux-headers-*-v8
         - linux-headers-*-arm64
-      ignore_errors: true  # noqa ignore-errors
+      ignore_errors: true # noqa ignore-errors
