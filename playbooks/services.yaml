@@ -42,4 +42,4 @@
       ansible.builtin.copy:
         dest: ~/.xscreensaver
         content: "mode: blank\n"
-        mode: '0600'
+        mode: "0600"

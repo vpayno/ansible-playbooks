@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.7/.schema/devbox.schema.json",
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.2/.schema/devbox.schema.json",
   "packages": [
     "actionlint@latest",
     "ansible-builder@latest",
@@ -10,16 +10,13 @@
     "ansible-navigator@latest",
     "aspell@latest",
     "aspellDicts.en@latest",
-    "cargo-info@latest",
-    "cargo-spellcheck@latest",
-    "cargo@latest",
     "commitlint@latest",
     "gh@latest",
     "git-cliff@latest",
+    "go@latest",
     "git@latest",
     "glab@latest",
     "glow@latest",
-    "go@latest",
     "jaq@latest",
     "jq@latest",
     "lychee@latest",
@@ -42,6 +39,7 @@
   ],
   "shell": {
     "init_hook": [
+      "export LOCALE_ARCHIVE=$PWD/.devbox/nix/profile/default/lib/locale/locale-archive",
       "go install github.com/client9/misspell/cmd/misspell@latest",
       "go install github.com/get-woke/woke@latest",
       "go install github.com/keewek/ansible-pretty-print@latest",

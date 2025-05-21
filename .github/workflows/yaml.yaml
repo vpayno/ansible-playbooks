@@ -3,7 +3,7 @@
 # .github/workflows/yaml.yaml
 #
 name: yaml
-on:  # yamllint disable-line rule:truthy
+on: # yamllint disable-line rule:truthy
   push:
     branches:
       - main
@@ -18,7 +18,7 @@ defaults:
 jobs:
   stage1:
     name: Change Check
-    runs-on: 'ubuntu-latest'
+    runs-on: "ubuntu-latest"
     outputs:
       docs_changed: ${{ steps.check_file_changed.outputs.docs_changed }}
     steps:
@@ -75,7 +75,7 @@ jobs:
           # Enable this to fail the check when violations are found
           fail_on_error: true
           # yamllint command flags
-          yamllint_flags: '.'
+          yamllint_flags: "."
       - name: Show yamllint Version
         id: yamllint-version
         run: |-

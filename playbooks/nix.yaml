@@ -8,10 +8,13 @@
   become: true
   vars:
     nix_profile_files:
-      - {src: "/etc/bash.bashrc.backup-before-nix", dst: "/etc/bash.bashrc"}
-      - {src: "/etc/bashrc.backup-before-nix", dst: "/etc/bashrc"}
-      - {src: "/etc/profile.d/nix.sh.backup-before-nix", dst: "/etc/profile.d/nix.sh"}
-      - {src: "/etc/zshrc.backup-before-nix", dst: "/etc/zshrc"}
+      - { src: "/etc/bash.bashrc.backup-before-nix", dst: "/etc/bash.bashrc" }
+      - { src: "/etc/bashrc.backup-before-nix", dst: "/etc/bashrc" }
+      - {
+          src: "/etc/profile.d/nix.sh.backup-before-nix",
+          dst: "/etc/profile.d/nix.sh",
+        }
+      - { src: "/etc/zshrc.backup-before-nix", dst: "/etc/zshrc" }
     nix_services:
       - nix-daemon.service
       - nix-daemon.socket
@@ -134,7 +137,7 @@
         state: directory
         owner: root
         group: nix-users
-        mode: '0770'
+        mode: "0770"
     - name: Update nix configuration
       block:
         - name: Add /etc/profile.d/golang.sh

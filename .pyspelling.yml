@@ -8,11 +8,11 @@ matrix:
       d: en_US
     sources:
       - ./LICENSE
-      - '**/*.md'
+      - "**/*.md"
       - ./profile
       - ./.github
-      - '**.yml'
-      - '**.yaml'
+      - "**.yml"
+      - "**.yaml"
     default_encoding: utf-8
     dictionary:
       wordlists:

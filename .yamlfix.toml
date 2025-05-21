@@ -12,20 +12,20 @@
 # MY_PREFIX_LINE_LENGTH="120"
 # yamlfix --env-prefix "MY_PREFIX" ./*yaml
 
-allow_duplicate_keys = false  # bool
-comments_min_spaces_from_content = 2  # int
-comments_require_starting_space = true  # bool
-comments_whitelines = 1  # int
-config_path = ""  # Optional[str] - /etc/yamlfix/
-explicit_start = true  # bool
-indent_mapping = 2  # int
-indent_offset = 2  # int
-indent_sequence = 4  # int
-line_length = 240  # int
-none_representation = ""  # str - (empty string), null, Null, NULL, ~
-preserve_quotes = true  # bool
-quote_basic_values = false  # bool
-quote_keys_and_basic_values = false  # bool
-quote_representation = "'"  # str
-section_whitelines = 1  # int
-sequence_style = "keep_style"  # YamlNodeStyle - flow_style, block_style, keep_style
+allow_duplicate_keys = false           # bool
+comments_min_spaces_from_content = 2   # int
+comments_require_starting_space = true # bool
+comments_whitelines = 1                # int
+config_path = ""                       # Optional[str] - /etc/yamlfix/
+explicit_start = true                  # bool
+indent_mapping = 2                     # int
+indent_offset = 2                      # int
+indent_sequence = 4                    # int
+line_length = 240                      # int
+none_representation = ""               # str - (empty string), null, Null, NULL, ~
+preserve_quotes = true                 # bool
+quote_basic_values = false             # bool
+quote_keys_and_basic_values = false    # bool
+quote_representation = "'"             # str
+section_whitelines = 1                 # int
+sequence_style = "keep_style"          # YamlNodeStyle - flow_style, block_style, keep_style

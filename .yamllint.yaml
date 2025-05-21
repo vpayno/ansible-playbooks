@@ -5,9 +5,9 @@
 #
 # yamllint version: 1.31.0
 yaml-files:
-  - '*.yaml'
-  - '*.yml'
-  - '.yamllint'
+  - "*.yaml"
+  - "*.yml"
+  - ".yamllint"
 
 rules:
   anchors: enable

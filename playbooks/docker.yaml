@@ -79,7 +79,7 @@
           ansible.builtin.copy:
             src: "{{ source_path }}"
             dest: /etc/docker/daemon.json
-            mode: '0644'
+            mode: "0644"
           notify: Restart-Docker
   handlers:
     - name: Restart-Docker

@@ -70,12 +70,12 @@ declare -a apt_pkgs=(
 
 if [[ -n ${NEWUSER} ]]; then
 	printf "Allowing password-less sudo for user %s\n" "${NEWUSER}"
-	tee >/etc/sudoers.d/020_user-nopasswd <<-EOF
+	tee > /etc/sudoers.d/020_user-nopasswd <<- EOF
 		${NEWUSER} ALL=(ALL) NOPASSWD: ALL
 	EOF
 fi
 
-tee >/usr/local/bin/dc-user-setup-ssh-agent <<-EOF
+tee > /usr/local/bin/dc-user-setup-ssh-agent <<- EOF
 	#!/usr/bin/env bash
 
 	# this script assumes that you will run it once and then start tmux which
