@@ -38,9 +38,9 @@ To list the Dev Containers:
 
 Notes:
 
-- Since the Dev Containers have to be manually stopped or destroyed, if you detach
-from your tmux shell before exiting the container's shell, you'll be able to
-resume from where you left off on your next session.
+- Since the Dev Containers have to be manually stopped or destroyed, if you
+  detach from your tmux shell before exiting the container's shell, you'll be
+  able to resume from where you left off on your next session.
 
 Example session:
 
