@@ -35,12 +35,6 @@
 
         pkgs = nixpkgs.legacyPackages.${system};
 
-        usageMessage = ''
-          Available ${name} flake commands:
-
-           nix run .#usage
-        '';
-
         metadata = {
           homepage = "https://github.com/vpayno/ansible-playbooks";
           description = "Homelab Ansible playbooks flake";
@@ -56,29 +50,41 @@
           ];
           mainProgram = "showUsage";
         };
+
+        data = {
+          usageMessage = ''
+            Available ${name} flake commands:
+
+             nix run .#usage
+          '';
+        };
+
+        scripts = {
+          showUsage = pkgs.writeShellApplication {
+            name = "showUsage";
+
+            runtimeInputs = with pkgs; [
+              coreutils
+            ];
+
+            text = ''
+              printf "%s" "${data.usageMessage}"
+            '';
+          };
+        };
       in
       {
         formatter = treefmt-conf.formatter.${system};
 
-        packages = rec {
-          default = showUsage;
-
-          # very odd, this doesn't work with pkgs.writeShellApplication
-          # odd quoting error when the string usagemessage as new lines
-          showUsage = pkgs.writeShellScriptBin "showUsage" ''
-            printf "%s" "${usageMessage}"
-          '';
-        };
-
-        apps = rec {
-          default = usage;
+        apps = {
+          default = self.apps.${system}.usage;
 
           usage = {
             type = "app";
             pname = "usage";
             inherit version;
             name = "${pname}-${version}";
-            program = "${pkgs.lib.getExe self.packages.${system}.showUsage}";
+            program = "${pkgs.lib.getExe scripts.showUsage}";
             meta = metadata;
           };
         };
