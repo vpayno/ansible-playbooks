@@ -155,3 +155,7 @@ cython_debug/
 
 # nix
 /result*
+
+# direnv
+/.direnv
+/.venv
