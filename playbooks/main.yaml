@@ -1,4 +1,9 @@
 ---
+- name: DNS configuration
+  ansible.builtin.import_playbook: dns.yaml
+  tags:
+    - raspberrypi
+    - main.dns
 - name: Kernel packages
   ansible.builtin.import_playbook: kernel.yaml
   tags:

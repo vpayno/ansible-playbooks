@@ -1,0 +1,29 @@
+---
+- name: Ensure DNS is properly configured
+  hosts: all
+  become: true
+  tasks:
+    - name: Ensure dns services are installed
+      tags:
+        - services
+        - dns
+        - raspberrypi
+        - raspianos
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      with_items:
+        - systemd-resolved
+    - name: Ensure /etc/resolv.conf is a symlink
+      tags:
+        - services
+        - dns
+        - raspberrypi
+        - raspianos
+      ansible.builtin.file:
+        src: /run/systemd/resolve/stub-resolv.conf
+        dest: /etc/resolv.conf
+        owner: root
+        group: root
+        state: link
