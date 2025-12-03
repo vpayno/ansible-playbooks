@@ -29,6 +29,9 @@ mapfile -t key_data < <(cat "${key_files[@]}")
 # todo: select servers to push authorized_keys to
 
 for h in "${hosts[@]}"; do
+	\ssh-keygen -f "${HOME}/.ssh/known_hosts" -R "${h#*@}"
+	printf "\n"
+
 	# shellcheck disable=SC2087
 	\ssh -o "ControlMaster=no" -o "ControlPath=none" -o "PreferredAuthentications=password" -o "PubkeyAuthentication=no" "${h}" bash <<-EOF
 		mkdir -pv ~/.ssh
@@ -37,4 +40,5 @@ for h in "${hosts[@]}"; do
 		chmod -v 0600 ~/.ssh/authorized_keys
 		printf "%s\n" "${key_data[@]}" | tee -a ~/.ssh/authorized_keys
 	EOF
+	printf "\n"
 done
