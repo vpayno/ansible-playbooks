@@ -12,6 +12,11 @@
       url = "github:vpayno/nix-treefmt-conf";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    system-manager = {
+      url = "github:numtide/system-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -77,9 +82,6 @@
                 name = "Victor Payno";
               }
             ];
-          };
-
-          context = {
           };
 
           data = {
@@ -241,25 +243,30 @@
 
           devShells = {
             default = pkgs.mkShell {
-              packages = with pkgs; [
-                actionlint
-                ansible-builder
-                ansible-cmdb
-                ansible-doctor
-                ansible-lint
-                ansible-navigator
-                gh
-                glab
-                glibcLocales
-                glow
-                jq
-                runme
-                shellcheck
-                shfmt
-                yamlfix
-                yamllint
-                yq-go
-              ];
+              packages =
+                with pkgs;
+                [
+                  actionlint
+                  ansible-builder
+                  ansible-cmdb
+                  ansible-doctor
+                  ansible-lint
+                  ansible-navigator
+                  gh
+                  glab
+                  glibcLocales
+                  glow
+                  jq
+                  runme
+                  shellcheck
+                  shfmt
+                  yamlfix
+                  yamllint
+                  yq-go
+                ]
+                ++ [
+                  inputs.system-manager.packages.${system}.default
+                ];
 
               # usually not needed in nixos, needed everywhere else
               LOCALE_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
@@ -276,16 +283,13 @@
       # also for nixosConfiguration, darwinConfigurations, etc
       flake =
         let
-          system = "x86_64-linux";
-
-          myOverlays = import ./overlays.nix { };
+          system = "aarch64-linux";
 
           pkgs-unstable = import nixpkgs {
             inherit system;
             config = {
               allowUnfree = true;
             };
-            inherit (myOverlays.nixpkgs) overlays;
           };
 
           pkgs-stable = import nixpkgs-stable {
@@ -293,10 +297,43 @@
             config = {
               allowUnfree = true;
             };
-            inherit (myOverlays.nixpkgs) overlays;
           };
         in
         {
+          systemConfigs =
+            let
+              context = {
+                nix = {
+                  cache = {
+                    fqdn = "cache.nix.homelab.local";
+                    publicKey = "cache.nix.homelab.local-1:Cdd9HwAEeDiKLkZQqnYs/J2co04AQ8PpfBrIVIYfpPA=";
+                  };
+                  cacheUpstream = {
+                    fqdn = "cache.nixos.org";
+                    publicKey = "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=";
+                    # fqdnSource = "cache.nixos.org";
+                  };
+                };
+              };
+            in
+            {
+              aarch64-linux = {
+                raspianServer = inputs.system-manager.lib.makeSystemConfig {
+                  extraSpecialArgs = {
+                    pkgs = pkgs-unstable;
+                    inherit
+                      context
+                      inputs
+                      system
+                      pkgs-stable
+                      ;
+                  };
+                  modules = [
+                    ./hosts/aarch64/raspianServer/default.nix
+                  ];
+                };
+              };
+            };
         };
     };
 }

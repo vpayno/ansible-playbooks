@@ -107,7 +107,28 @@
         "flake-parts": "flake-parts",
         "nixpkgs": "nixpkgs",
         "nixpkgs-stable": "nixpkgs-stable",
+        "system-manager": "system-manager",
         "treefmt-conf": "treefmt-conf"
+      }
+    },
+    "system-manager": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1764233885,
+        "narHash": "sha256-m6etiBLSMajunnbUvEI1Pc/jNu4naImalgQnctVJ1/k=",
+        "owner": "numtide",
+        "repo": "system-manager",
+        "rev": "a0343ab10763fbbfcf8d3b69c8341c18b1b1f215",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "system-manager",
+        "type": "github"
       }
     },
     "systems": {

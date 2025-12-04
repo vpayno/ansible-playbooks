@@ -35,7 +35,8 @@
     "yamlfix@latest",
     "yamllint@latest",
     "yq-go@latest",
-    "glibcLocales@latest"
+    "glibcLocales@latest",
+    "github:numtide/system-manager#default"
   ],
   "shell": {
     "init_hook": [

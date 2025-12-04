@@ -733,6 +733,10 @@
       "last_modified": "2025-12-02T02:29:13Z",
       "resolved": "github:NixOS/nixpkgs/f720de59066162ee879adcc8c79e15c51fe6bfb4?lastModified=1764642553&narHash=sha256-mvbFFzVBhVK1FjyPHZGMAKpNiqkr7k%2B%2BxIwy%2Bp%2FNQvA%3D"
     },
+    "github:numtide/system-manager#default": {
+      "last_modified": "2025-11-27T08:58:05Z",
+      "resolved": "github:numtide/system-manager/a0343ab10763fbbfcf8d3b69c8341c18b1b1f215?lastModified=1764233885&narHash=sha256-m6etiBLSMajunnbUvEI1Pc%2FjNu4naImalgQnctVJ1%2Fk%3D#default"
+    },
     "glab@latest": {
       "last_modified": "2025-11-23T21:50:36Z",
       "resolved": "github:NixOS/nixpkgs/ee09932cedcef15aaf476f9343d1dea2cb77e261#glab",
