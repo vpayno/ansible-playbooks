@@ -172,6 +172,43 @@
                 printf "\n"
               '';
             };
+
+            ci-sysmgr-build = pkgs.writeShellApplication {
+              name = "ci--sysmgrbuild";
+
+              runtimeInputs = with pkgs; [
+                coreutils
+                jq
+                nix-info
+                tree
+              ];
+
+              text = ''
+                 declare -a sm_names=( "''${@:-raspianServer}" )
+
+                printf "System Info:\n"
+                nix-info -m
+                printf "\n"
+
+                for sm_name in "''${sm_names[@]}"; do
+                  printf "\n#\n# system-manager build --flake .#%s\n#\n\n" "$sm_name"
+                  time system-manager build --flake ".#$sm_name"
+                  printf "\n"
+
+                  echo tree ./result
+                  tree ./result
+                  printf "\n"
+
+                  echo jq . ./result/etcFiles/etcFiles.json
+                  jq . ./result/etcFiles/etcFiles.json
+                  printf "\n"
+
+                  echo jq . ./result/services/services.json
+                  jq . ./result/services/services.json
+                  printf "\n"
+                done
+              '';
+            };
           };
         in
         {
@@ -237,6 +274,18 @@
                 inherit version;
                 name = "${pname}-${version}";
                 mainProgram = "ci-lint";
+              };
+            };
+
+            ci-sysmgr-build = {
+              type = "app";
+              program = "${pkgs.lib.getExe scripts.ci-sysmgr-build}";
+              meta = metadata // {
+                description = "Build test all system-manager profiles";
+                pname = "ci-sysmgr-build";
+                inherit version;
+                name = "${pname}-${version}";
+                mainProgram = "ci-sysmgr-build";
               };
             };
           };
