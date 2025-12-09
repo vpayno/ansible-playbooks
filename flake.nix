@@ -101,9 +101,10 @@
 
                nix run .#update-host profileName
 
-               nix run .#ci-actionlit
+               nix run .#ci-actionlint
                nix run .#ci-check
                nix run .#ci-format
+               nix run .#ci-ansiblelint
                nix run .#ci-lint
             '';
 
@@ -228,6 +229,20 @@
               '';
             };
 
+            ci-ansiblelint = pkgs.writeShellApplication {
+              name = "ci-ansiblelint";
+
+              runtimeInputs = with pkgs; [
+                ansible-lint
+              ];
+
+              text = ''
+                printf "Running ansible-lint...\n"
+                # ansible-lint wants "bad" yaml formatting, ignoring
+                ansible-lint --skip-list=formatting ./playbooks/ ./tasks/ ./templates/ ./files/ ./tools/
+              '';
+            };
+
             ci-lint = pkgs.writeShellApplication {
               name = "ci-lint";
 
@@ -345,6 +360,18 @@
                 inherit version;
                 name = "${pname}-${version}";
                 mainProgram = "ci-format";
+              };
+            };
+
+            ci-ansiblelint = {
+              type = "app";
+              program = "${pkgs.lib.getExe scripts.ci-ansiblelint}";
+              meta = metadata // {
+                description = "CI Ansible Linter";
+                pname = "ci-ansiblelint";
+                inherit version;
+                name = "${pname}-${version}";
+                mainProgram = "ci-ansiblelint";
               };
             };
 
