@@ -17,6 +17,15 @@
       url = "github:numtide/system-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nix-colors = {
+      url = "github:Misterio77/nix-colors";
+    };
   };
 
   outputs =
@@ -347,42 +356,57 @@
               allowUnfree = true;
             };
           };
-        in
-        {
-          systemConfigs =
-            let
-              context = {
-                nix = {
-                  cache = {
-                    fqdn = "cache.nix.homelab.local";
-                    publicKey = "cache.nix.homelab.local-1:Cdd9HwAEeDiKLkZQqnYs/J2co04AQ8PpfBrIVIYfpPA=";
-                  };
-                  cacheUpstream = {
-                    fqdn = "cache.nixos.org";
-                    publicKey = "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=";
-                    # fqdnSource = "cache.nixos.org";
-                  };
-                };
+
+          context = {
+            nix = {
+              cache = {
+                fqdn = "cache.nix.homelab.local";
+                publicKey = "cache.nix.homelab.local-1:Cdd9HwAEeDiKLkZQqnYs/J2co04AQ8PpfBrIVIYfpPA=";
               };
-            in
-            {
-              aarch64-linux = {
-                raspianServer = inputs.system-manager.lib.makeSystemConfig {
-                  extraSpecialArgs = {
-                    pkgs = pkgs-unstable;
-                    inherit
-                      context
-                      inputs
-                      system
-                      pkgs-stable
-                      ;
-                  };
-                  modules = [
-                    ./hosts/aarch64/raspianServer/default.nix
-                  ];
-                };
+              cacheUpstream = {
+                fqdn = "cache.nixos.org";
+                publicKey = "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=";
+                # fqdnSource = "cache.nixos.org";
               };
             };
+          };
+        in
+        {
+          systemConfigs = {
+            aarch64-linux = {
+              raspianServer = inputs.system-manager.lib.makeSystemConfig {
+                extraSpecialArgs = {
+                  pkgs = pkgs-unstable;
+                  inherit
+                    context
+                    inputs
+                    system
+                    pkgs-stable
+                    ;
+                };
+                modules = [
+                  ./hosts/aarch64/raspianServer/default.nix
+                ];
+              };
+            };
+          };
+
+          homeConfigurations = {
+            "vpayno" = inputs.home-manager.lib.homeManagerConfiguration {
+              pkgs = pkgs-unstable;
+              extraSpecialArgs = {
+                inherit
+                  context
+                  inputs
+                  system
+                  pkgs-stable
+                  ;
+              };
+              modules = [
+                ./home/vpayno/headless.nix
+              ];
+            };
+          };
         };
     };
 }

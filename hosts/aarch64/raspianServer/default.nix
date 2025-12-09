@@ -25,6 +25,7 @@ in
     environment = {
       systemPackages = [
         inputs.system-manager.packages.${system}.default
+        inputs.home-manager.packages.${system}.default
       ]
       ++ (with pkgs; [
         neofetch
