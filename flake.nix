@@ -191,19 +191,6 @@
               '';
             };
 
-            ci-actionlint = pkgs.writeShellApplication {
-              name = "ci-actionlint";
-
-              runtimeInputs = with pkgs; [
-                actionlint
-              ];
-
-              text = ''
-                printf "Running ci-actionlint...\n"
-                actionlint ./.github/workflows/*yaml
-              '';
-            };
-
             ci-check = pkgs.writeShellApplication {
               name = "ci-check";
 
@@ -250,6 +237,19 @@
                 printf "Running ansible-lint...\n"
                 # ansible-lint wants "bad" yaml formatting, ignoring
                 ansible-lint --skip-list=formatting ./playbooks/ ./tasks/ ./templates/ ./files/ ./tools/
+              '';
+            };
+
+            ci-actionlint = pkgs.writeShellApplication {
+              name = "ci-actionlint";
+
+              runtimeInputs = with pkgs; [
+                actionlint
+              ];
+
+              text = ''
+                printf "Running ci-actionlint...\n"
+                actionlint ./.github/workflows/*yaml
               '';
             };
 
@@ -346,18 +346,6 @@
               };
             };
 
-            ci-actionlint = {
-              type = "app";
-              program = "${pkgs.lib.getExe scripts.ci-actionlint}";
-              meta = metadata // {
-                description = "GitHub action linter";
-                pname = "ci-actionlint";
-                inherit version;
-                name = "${pname}-${version}";
-                mainProgram = "ci-actionlint";
-              };
-            };
-
             ci-check = {
               type = "app";
               program = "${pkgs.lib.getExe scripts.ci-check}";
@@ -379,6 +367,18 @@
                 inherit version;
                 name = "${pname}-${version}";
                 mainProgram = "ci-format";
+              };
+            };
+
+            ci-actionlint = {
+              type = "app";
+              program = "${pkgs.lib.getExe scripts.ci-actionlint}";
+              meta = metadata // {
+                description = "GitHub action linter";
+                pname = "ci-actionlint";
+                inherit version;
+                name = "${pname}-${version}";
+                mainProgram = "ci-actionlint";
               };
             };
 
