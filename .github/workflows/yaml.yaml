@@ -11,6 +11,9 @@ on: # yamllint disable-line rule:truthy
   pull_request:
   workflow_dispatch:
 
+env:
+  CI_TOOL_REPO: "."
+
 defaults:
   run:
     shell: bash
@@ -56,7 +59,7 @@ jobs:
             printf "%s=%s\n" "docs_changed" "${HAS_DIFF}" | tee -a "${GITHUB_OUTPUT}"
           } | tee -a "${GITHUB_STEP_SUMMARY}"
   stage2:
-    name: yaml
+    name: yamllint
     runs-on: ubuntu-latest
     needs:
       - stage1
@@ -64,19 +67,15 @@ jobs:
     steps:
       - name: Git Checkout
         uses: actions/checkout@v4
-      - name: YamlLint with Reviewdog
-        uses: reviewdog/action-yamllint@v1
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Check Nixpkgs inputs
+        uses: DeterminateSystems/flake-checker-action@main
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          # Change reviewdog reporter if you need [github-pr-check,github-check,github-pr-review].
-          reporter: github-check
-          # Change reporter level if you need. GitHub Status Check won't become failure with warning.
-          level: error
-          # Enable this to fail the check when violations are found
-          fail_on_error: true
-          # yamllint command flags
-          yamllint_flags: "."
-      - name: Show yamllint Version
-        id: yamllint-version
-        run: |-
-          yamllint --version
+          fail-mode: true
+
+      - name: yamllint
+        id: run-yaml
+        run: nix run "${CI_TOOL_REPO}"#ci-yamllint
