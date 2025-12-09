@@ -28,26 +28,26 @@ to manage "User" configurations.
 
 ### Runme Playbooks
 
+Show the system-manager and home-manager latest profile diffs.
+
 ```bash { name=nix-nvd-diff-latest }
 declare target_host=rpi11
 
 echo Running: \ssh "${target_host}" '/run/system-manager/sw/bin/nvd diff $(find /nix/var/nix/profiles/system-manager-profiles/ -type l -regextype posix-extended -regex '^.*/system-manager-[0-9]+-link$' | sort -V | tail -n 2 | tr "\n" " ")'
 time \ssh "${target_host}" '/run/system-manager/sw/bin/nvd diff $(find /nix/var/nix/profiles/system-manager-profiles/ -type l -regextype posix-extended -regex '^.*/system-manager-[0-9]+-link$' | sort -V | tail -n 2 | tr "\n" " ")'
-```
-
-```bash { name=nix-sm-hm-update-push-repo }
-declare target_host=rpi11
-
-echo Running: \rsync --delete --progress --archive --hard-links --sparse --chown=root:root ~/git_vpayno/ansible-playbooks/ root@"${target_host}":.config/system-manager/
-time \rsync --delete --progress --archive --hard-links --sparse --chown=root:root ~/git_vpayno/ansible-playbooks/ root@"${target_host}":.config/system-manager/
 printf "\n"
+
+echo Running: \ssh "${target_host}" "nvd diff \$(home-manager generations | head -n 2 | sed -r -e 's;^[0-9]+-[0-9]+-[0-9]+ [0-9]+:[0-9]+ : id [0-9]+ -> (/nix/store/[a-z0-9]+-home-manager-generation).*$;\1;g' | tac)"
+time \ssh "${target_host}" "nvd diff \$(home-manager generations | head -n 2 | sed -r -e 's;^[0-9]+-[0-9]+-[0-9]+ [0-9]+:[0-9]+ : id [0-9]+ -> (/nix/store/[a-z0-9]+-home-manager-generation).*$;\1;g' | tac)"
 ```
+
+Update both system-manager and home-manager on remote host.
 
 ```bash { name=nix-sm-hm-update-push-repo-and-update }
 declare target_host=rpi11
 
-echo Running: \rsync --delete --progress --archive --hard-links --sparse --chown=root:root ~/git_vpayno/ansible-playbooks/ root@"${target_host}":.config/system-manager/
-time \rsync --delete --progress --archive --hard-links --sparse --chown=root:root ~/git_vpayno/ansible-playbooks/ root@"${target_host}":.config/system-manager/
+echo Running: \rsync --delete --progress --archive --hard-links --sparse --chown=root:root --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ root@"${target_host}":.config/system-manager/
+time \rsync --delete --progress --archive --hard-links --sparse --chown=root:root --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ root@"${target_host}":.config/system-manager/
 printf "\n"
 
 echo Running: \ssh "root@${target_host}" "cd ~/.config/system-manager && /nix/var/nix/profiles/default/bin/nix run github:numtide/system-manager -- switch --flake .#raspianServer"
@@ -55,14 +55,60 @@ printf "\n"
 
 if time \ssh "root@${target_host}" "cd ~/.config/system-manager && /nix/var/nix/profiles/default/bin/nix run github:numtide/system-manager -- switch --flake .#raspianServer"; then
     printf "INFO: system-manager ran sucessfully!\n"
-	printf "\n"
-	time \ssh "${target_host}" '/run/system-manager/sw/bin/nvd diff $(find /nix/var/nix/profiles/system-manager-profiles/ -type l -regextype posix-extended -regex '^.*/system-manager-[0-9]+-link$' | sort -V | tail -n 2 | tr "\n" " ")'
+    printf "\n"
+    time \ssh "${target_host}" '/run/system-manager/sw/bin/nvd diff $(find /nix/var/nix/profiles/system-manager-profiles/ -type l -regextype posix-extended -regex '^.*/system-manager-[0-9]+-link$' | sort -V | tail -n 2 | tr "\n" " ")'
 else
-	printf "ERROR: system-manager failed!\n"
+    printf "ERROR: system-manager failed!\n"
+fi
+
+echo Running: \rsync --delete --progress --archive --hard-links --sparse --chown=vpayno:vpayno --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ vpayno@"${target_host}":.config/home-manager/
+time \rsync --delete --progress --archive --hard-links --sparse --chown=vpayno:vpayno --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ vpayno@"${target_host}":.config/home-manager/
+printf "\n"
+
+echo Running: \ssh "vpayno@${target_host}" "home-manager -b before-home-manager switch --flake ~/.config/home-manager#vpayno"
+printf "\n"
+
+if time \ssh "vpayno@${target_host}" "home-manager -b before-home-manager switch --flake ~/.config/home-manager#vpayno"; then
+    printf "INFO: home-manager ran sucessfully!\n"
+    printf "\n"
+    time \ssh "${target_host}" "nvd diff \$(home-manager generations | head -n 2 | sed -r -e 's;^[0-9]+-[0-9]+-[0-9]+ [0-9]+:[0-9]+ : id [0-9]+ -> (/nix/store/[a-z0-9]+-home-manager-generation).*$;\1;g' | tac)"
+else
+    printf "ERROR: home-manager failed!\n"
 fi
 ```
 
-```bash { name=nix-sm-hm-update-from-local }
+Sync system-manager repo to remote host.
+
+```bash { name=nix-sm-update-push-repo }
+declare target_host=rpi11
+
+echo Running: \rsync --delete --progress --archive --hard-links --sparse --chown=root:root --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ root@"${target_host}":.config/system-manager/
+time \rsync --delete --progress --archive --hard-links --sparse --chown=root:root --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ root@"${target_host}":.config/system-manager/
+printf "\n"
+```
+
+Sync repo and run system-manager on remote host.
+
+```bash { name=nix-sm-update-push-repo-and-update }
+declare target_host=rpi11
+
+echo Running: \rsync --delete --progress --archive --hard-links --sparse --chown=root:root --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ root@"${target_host}":.config/system-manager/
+time \rsync --delete --progress --archive --hard-links --sparse --chown=root:root --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ root@"${target_host}":.config/system-manager/
+printf "\n"
+
+echo Running: \ssh "root@${target_host}" "cd ~/.config/system-manager && /nix/var/nix/profiles/default/bin/nix run github:numtide/system-manager -- switch --flake .#raspianServer"
+printf "\n"
+
+if time \ssh "root@${target_host}" "cd ~/.config/system-manager && /nix/var/nix/profiles/default/bin/nix run github:numtide/system-manager -- switch --flake .#raspianServer"; then
+    printf "INFO: system-manager ran sucessfully!\n"
+    printf "\n"
+    time \ssh "${target_host}" '/run/system-manager/sw/bin/nvd diff $(find /nix/var/nix/profiles/system-manager-profiles/ -type l -regextype posix-extended -regex '^.*/system-manager-[0-9]+-link$' | sort -V | tail -n 2 | tr "\n" " ")'
+else
+    printf "ERROR: system-manager failed!\n"
+fi
+```
+
+```bash { name=nix-sm-update-from-local-to-remote }
 declare target_host=rpi11
 
 echo Running: system-manager --target-host "root@${target_host}" switch --flake .#systemConfigs.aarch64-linux.raspianServer
@@ -70,17 +116,19 @@ printf "\n"
 
 if time system-manager --target-host "root@${target_host}" switch --flake .#systemConfigs.aarch64-linux.raspianServer; then
     printf "INFO: system-manager ran sucessfully!\n"
-	printf "\n"
-	time \ssh "${target_host}" '/run/system-manager/sw/bin/nvd diff $(find /nix/var/nix/profiles/system-manager-profiles/ -type l -regextype posix-extended -regex '^.*/system-manager-[0-9]+-link$' | sort -V | tail -n 2 | tr "\n" " ")'
+    printf "\n"
+    time \ssh "${target_host}" '/run/system-manager/sw/bin/nvd diff $(find /nix/var/nix/profiles/system-manager-profiles/ -type l -regextype posix-extended -regex '^.*/system-manager-[0-9]+-link$' | sort -V | tail -n 2 | tr "\n" " ")'
 else
-	printf "ERROR: system-manager failed!\n"
+    printf "ERROR: system-manager failed!\n"
 fi
 ```
+
+Using github.com as the repo source:
 
 - To specify a tag, use `?ref=refs/tags/yyyymmdd.serial.patch#raspianServer`.
 - To specify a branch, use `?ref=refs/heads/BRANCH_NAME#raspianServer`.
 
-```bash { name=nix-sm-hm-update-from-github }
+```bash { name=nix-sm-update-from-github }
 declare target_host=rpi11
 
 echo Running: system-manager --target-host "root@${target_host}" switch --flake github.com:vpayno/ansible-playbooks#systemConfigs.aarch64-linux.raspianServer
@@ -88,10 +136,63 @@ printf "\n"
 
 if time system-manager --target-host "root@${target_host}" switch --flake github.com:vpayno/ansible-playbooks#systemConfigs.aarch64-linux.raspianServer; then
     printf "INFO: system-manager ran sucessfully!\n"
-	printf "\n"
-	time \ssh "${target_host}" '/run/system-manager/sw/bin/nvd diff $(find /nix/var/nix/profiles/system-manager-profiles/ -type l -regextype posix-extended -regex '^.*/system-manager-[0-9]+-link$' | sort -V | tail -n 2 | tr "\n" " ")'
+    printf "\n"
+    time \ssh "${target_host}" '/run/system-manager/sw/bin/nvd diff $(find /nix/var/nix/profiles/system-manager-profiles/ -type l -regextype posix-extended -regex '^.*/system-manager-[0-9]+-link$' | sort -V | tail -n 2 | tr "\n" " ")'
 else
-	printf "ERROR: system-manager failed!\n"
+    printf "ERROR: system-manager failed!\n"
+fi
+```
+
+### Home-Manager
+
+Push home-manager repo to remote host.
+
+```bash { name=nix-hm-update-push-repo }
+declare target_host=rpi11
+
+echo Running: \rsync --delete --progress --archive --hard-links --sparse --chown=vpayno:vpayno --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ vpayno@"${target_host}":.config/home-manager/
+time \rsync --delete --progress --archive --hard-links --sparse --chown=vpayno:vpayno --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ vpayno@"${target_host}":.config/home-manager/
+printf "\n"
+```
+
+Push repo to remote host and update home-manager configuration from remote host.
+
+```bash { name=nix-hm-update-push-repo-and-update }
+declare target_host=rpi11
+
+echo Running: \rsync --delete --progress --archive --hard-links --sparse --chown=vpayno:vpayno --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ vpayno@"${target_host}":.config/home-manager/
+time \rsync --delete --progress --archive --hard-links --sparse --chown=vpayno:vpayno --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ vpayno@"${target_host}":.config/home-manager/
+printf "\n"
+
+echo Running: \ssh "vpayno@${target_host}" "home-manager -b before-home-manager switch --flake ~/.config/home-manager#vpayno"
+printf "\n"
+
+if time \ssh "vpayno@${target_host}" "home-manager -b before-home-manager switch --flake ~/.config/home-manager#vpayno"; then
+    printf "INFO: home-manager ran sucessfully!\n"
+    printf "\n"
+    time \ssh "${target_host}" "nvd diff \$(home-manager generations | head -n 2 | sed -r -e 's;^[0-9]+-[0-9]+-[0-9]+ [0-9]+:[0-9]+ : id [0-9]+ -> (/nix/store/[a-z0-9]+-home-manager-generation).*$;\1;g' | tac)"
+else
+    printf "ERROR: home-manager failed!\n"
+fi
+```
+
+Using github.com as the repo source:
+
+- To specify a tag, use `?ref=refs/tags/yyyymmdd.serial.patch#vpayno`.
+- To specify a branch, use `?ref=refs/heads/BRANCH_NAME#vpayno`.
+
+```bash { name=nix-hm-update-from-github }
+declare target_host=rpi11
+
+echo Running: \ssh "vpayno@${target_host}" "home-manager -b before-home-manager switch --flake github.com:vpayno/ansible-playbooks#vpayno"
+printf "\n"
+
+if time \ssh "vpayno@${target_host}" "home-manager -b before-home-manager switch --flake github.com:vpayno/ansible-playbooks#vpayno"; then
+    printf "INFO: home-manager ran sucessfully!\n"
+    printf "\n"
+    time \ssh "${target_host}" "nvd diff \$(home-manager generations | head -n 2 | sed -r -e 's;^[0-9]+-[0-9]+-[0-9]+ [0-9]+:[0-9]+ : id [0-9]+ -> (/nix/store/[a-z0-9]+-home-manager-generation).*$;\1;g' | tac)"
+else
+    printf "ERROR: home-manager failed!\n"
 fi
 ```
 
@@ -101,18 +202,37 @@ The `system` value has to match on both hosts if you use the shortcut
 `.#raspianServer`. To target a different architecture, specify the full path:
 `systemConfigs.aarch64-linux.raspianServer`.
 
-```bash { name=nix-sm-hm-update-rpi11 }
-declare target_host=rpi11
+```bash { name=nix-sm-hm-update-rpi }
+export target_host=rpi11
 
-echo Running: system-manager --target-host root@"${target_host}" switch --flake .#systemConfigs.aarch64-linux.raspianServer
+echo Running: \rsync --delete --progress --archive --hard-links --sparse --chown=root:root --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ root@"${target_host}":.config/system-manager/
+time \rsync --delete --progress --archive --hard-links --sparse --chown=root:root --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ root@"${target_host}":.config/system-manager/
 printf "\n"
 
-if time system-manager --target-host root@"${target_host}" switch --flake .#systemConfigs.aarch64-linux.raspianServer; then
+echo Running: \ssh "root@${target_host}" "cd ~/.config/system-manager && /nix/var/nix/profiles/default/bin/nix run github:numtide/system-manager -- switch --flake .#raspianServer"
+printf "\n"
+
+if time \ssh "root@${target_host}" "cd ~/.config/system-manager && /nix/var/nix/profiles/default/bin/nix run github:numtide/system-manager -- switch --flake .#raspianServer"; then
     printf "INFO: system-manager ran sucessfully!\n"
-	printf "\n"
-	time \ssh "${target_host}" '/run/system-manager/sw/bin/nvd diff $(find /nix/var/nix/profiles/system-manager-profiles/ -type l -regextype posix-extended -regex '^.*/system-manager-[0-9]+-link$' | sort -V | tail -n 2 | tr "\n" " ")'
+    printf "\n"
+    time \ssh "${target_host}" '/run/system-manager/sw/bin/nvd diff $(find /nix/var/nix/profiles/system-manager-profiles/ -type l -regextype posix-extended -regex '^.*/system-manager-[0-9]+-link$' | sort -V | tail -n 2 | tr "\n" " ")'
 else
-	printf "ERROR: system-manager failed!\n"
+    printf "ERROR: system-manager failed!\n"
+fi
+
+echo Running: \rsync --delete --progress --archive --hard-links --sparse --chown=vpayno:vpayno --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ vpayno@"${target_host}":.config/home-manager/
+time \rsync --delete --progress --archive --hard-links --sparse --chown=vpayno:vpayno --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ vpayno@"${target_host}":.config/home-manager/
+printf "\n"
+
+echo Running: \ssh "vpayno@${target_host}" "home-manager -b before-home-manager switch --flake ~/.config/home-manager#vpayno"
+printf "\n"
+
+if time \ssh "vpayno@${target_host}" "home-manager -b before-home-manager switch --flake ~/.config/home-manager#vpayno"; then
+    printf "INFO: home-manager ran sucessfully!\n"
+    printf "\n"
+    time \ssh "${target_host}" "nvd diff \$(home-manager generations | head -n 2 | sed -r -e 's;^[0-9]+-[0-9]+-[0-9]+ [0-9]+:[0-9]+ : id [0-9]+ -> (/nix/store/[a-z0-9]+-home-manager-generation).*$;\1;g' | tac)"
+else
+    printf "ERROR: home-manager failed!\n"
 fi
 ```
 
