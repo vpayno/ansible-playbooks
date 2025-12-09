@@ -11,6 +11,9 @@ on: # yamllint disable-line rule:truthy
   pull_request:
   workflow_dispatch:
 
+env:
+  CI_TOOL_REPO: "."
+
 defaults:
   run:
     shell: bash
@@ -64,5 +67,15 @@ jobs:
     steps:
       - name: Git Checkout
         uses: actions/checkout@v4
-      - name: Run ansible-lint
-        uses: ansible/ansible-lint@v24
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Check Nixpkgs inputs
+        uses: DeterminateSystems/flake-checker-action@main
+        with:
+          fail-mode: true
+
+      - name: ansiblelint
+        id: run-ansiblelint
+        run: nix run "${CI_TOOL_REPO}"#ci-ansiblelint
