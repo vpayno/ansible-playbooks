@@ -54,7 +54,7 @@ echo Running: \ssh "root@${target_host}" "cd ~/.config/system-manager && /nix/va
 printf "\n"
 
 if time \ssh "root@${target_host}" "cd ~/.config/system-manager && /nix/var/nix/profiles/default/bin/nix run github:numtide/system-manager -- switch --flake .#raspianServer"; then
-    printf "INFO: system-manager ran sucessfully!\n"
+    printf "INFO: system-manager ran successfully!\n"
     printf "\n"
     time \ssh "${target_host}" '/run/system-manager/sw/bin/nvd diff $(find /nix/var/nix/profiles/system-manager-profiles/ -type l -regextype posix-extended -regex '^.*/system-manager-[0-9]+-link$' | sort -V | tail -n 2 | tr "\n" " ")'
 else
@@ -69,7 +69,7 @@ echo Running: \ssh "vpayno@${target_host}" "home-manager -b before-home-manager 
 printf "\n"
 
 if time \ssh "vpayno@${target_host}" "home-manager -b before-home-manager switch --flake ~/.config/home-manager#vpayno"; then
-    printf "INFO: home-manager ran sucessfully!\n"
+    printf "INFO: home-manager ran successfully!\n"
     printf "\n"
     time \ssh "${target_host}" "nvd diff \$(home-manager generations | head -n 2 | sed -r -e 's;^[0-9]+-[0-9]+-[0-9]+ [0-9]+:[0-9]+ : id [0-9]+ -> (/nix/store/[a-z0-9]+-home-manager-generation).*$;\1;g' | tac)"
 else
@@ -100,7 +100,7 @@ echo Running: \ssh "root@${target_host}" "cd ~/.config/system-manager && /nix/va
 printf "\n"
 
 if time \ssh "root@${target_host}" "cd ~/.config/system-manager && /nix/var/nix/profiles/default/bin/nix run github:numtide/system-manager -- switch --flake .#raspianServer"; then
-    printf "INFO: system-manager ran sucessfully!\n"
+    printf "INFO: system-manager ran successfully!\n"
     printf "\n"
     time \ssh "${target_host}" '/run/system-manager/sw/bin/nvd diff $(find /nix/var/nix/profiles/system-manager-profiles/ -type l -regextype posix-extended -regex '^.*/system-manager-[0-9]+-link$' | sort -V | tail -n 2 | tr "\n" " ")'
 else
@@ -115,7 +115,7 @@ echo Running: system-manager --target-host "root@${target_host}" switch --flake 
 printf "\n"
 
 if time system-manager --target-host "root@${target_host}" switch --flake .#systemConfigs.aarch64-linux.raspianServer; then
-    printf "INFO: system-manager ran sucessfully!\n"
+    printf "INFO: system-manager ran successfully!\n"
     printf "\n"
     time \ssh "${target_host}" '/run/system-manager/sw/bin/nvd diff $(find /nix/var/nix/profiles/system-manager-profiles/ -type l -regextype posix-extended -regex '^.*/system-manager-[0-9]+-link$' | sort -V | tail -n 2 | tr "\n" " ")'
 else
@@ -135,7 +135,7 @@ echo Running: system-manager --target-host "root@${target_host}" switch --flake 
 printf "\n"
 
 if time system-manager --target-host "root@${target_host}" switch --flake github.com:vpayno/ansible-playbooks#systemConfigs.aarch64-linux.raspianServer; then
-    printf "INFO: system-manager ran sucessfully!\n"
+    printf "INFO: system-manager ran successfully!\n"
     printf "\n"
     time \ssh "${target_host}" '/run/system-manager/sw/bin/nvd diff $(find /nix/var/nix/profiles/system-manager-profiles/ -type l -regextype posix-extended -regex '^.*/system-manager-[0-9]+-link$' | sort -V | tail -n 2 | tr "\n" " ")'
 else
@@ -168,7 +168,7 @@ echo Running: \ssh "vpayno@${target_host}" "home-manager -b before-home-manager 
 printf "\n"
 
 if time \ssh "vpayno@${target_host}" "home-manager -b before-home-manager switch --flake ~/.config/home-manager#vpayno"; then
-    printf "INFO: home-manager ran sucessfully!\n"
+    printf "INFO: home-manager ran successfully!\n"
     printf "\n"
     time \ssh "${target_host}" "nvd diff \$(home-manager generations | head -n 2 | sed -r -e 's;^[0-9]+-[0-9]+-[0-9]+ [0-9]+:[0-9]+ : id [0-9]+ -> (/nix/store/[a-z0-9]+-home-manager-generation).*$;\1;g' | tac)"
 else
@@ -188,7 +188,7 @@ echo Running: \ssh "vpayno@${target_host}" "home-manager -b before-home-manager 
 printf "\n"
 
 if time \ssh "vpayno@${target_host}" "home-manager -b before-home-manager switch --flake github.com:vpayno/ansible-playbooks#vpayno"; then
-    printf "INFO: home-manager ran sucessfully!\n"
+    printf "INFO: home-manager ran successfully!\n"
     printf "\n"
     time \ssh "${target_host}" "nvd diff \$(home-manager generations | head -n 2 | sed -r -e 's;^[0-9]+-[0-9]+-[0-9]+ [0-9]+:[0-9]+ : id [0-9]+ -> (/nix/store/[a-z0-9]+-home-manager-generation).*$;\1;g' | tac)"
 else
@@ -213,7 +213,7 @@ echo Running: \ssh "root@${target_host}" "cd ~/.config/system-manager && /nix/va
 printf "\n"
 
 if time \ssh "root@${target_host}" "cd ~/.config/system-manager && /nix/var/nix/profiles/default/bin/nix run github:numtide/system-manager -- switch --flake .#raspianServer"; then
-    printf "INFO: system-manager ran sucessfully!\n"
+    printf "INFO: system-manager ran successfully!\n"
     printf "\n"
     time \ssh "${target_host}" '/run/system-manager/sw/bin/nvd diff $(find /nix/var/nix/profiles/system-manager-profiles/ -type l -regextype posix-extended -regex '^.*/system-manager-[0-9]+-link$' | sort -V | tail -n 2 | tr "\n" " ")'
 else
@@ -228,7 +228,7 @@ echo Running: \ssh "vpayno@${target_host}" "home-manager -b before-home-manager 
 printf "\n"
 
 if time \ssh "vpayno@${target_host}" "home-manager -b before-home-manager switch --flake ~/.config/home-manager#vpayno"; then
-    printf "INFO: home-manager ran sucessfully!\n"
+    printf "INFO: home-manager ran successfully!\n"
     printf "\n"
     time \ssh "${target_host}" "nvd diff \$(home-manager generations | head -n 2 | sed -r -e 's;^[0-9]+-[0-9]+-[0-9]+ [0-9]+:[0-9]+ : id [0-9]+ -> (/nix/store/[a-z0-9]+-home-manager-generation).*$;\1;g' | tac)"
 else
