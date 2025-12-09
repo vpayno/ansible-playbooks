@@ -59,33 +59,23 @@
             value: "{{ item.answer }}"
             unseen: false
           with_items:
-            - {
-                pkg: "davfs2",
-                question: "davfs2/suid_file",
-                vtype: "boolean",
-                answer: false,
-              }
-            - {
-                pkg: "davfs2",
-                question: "davfs2/user_name",
-                vtype: "string",
-                answer: "davfs2",
-              }
-            - {
-                pkg: "davfs2",
-                question: "davfs2/group_name",
-                vtype: "string",
-                answer: "davfs2",
-              }
-            - {
-                pkg: "davfs2",
-                question: "davfs2/new_user",
-                vtype: "boolean",
-                answer: true,
-              }
-            - {
-                pkg: "davfs2",
-                question: "davfs2/new_group",
-                vtype: "boolean",
-                answer: true,
-              }
+            - pkg: "davfs2"
+              question: "davfs2/suid_file"
+              vtype: "boolean"
+              answer: false
+            - pkg: "davfs2"
+              question: "davfs2/user_name"
+              vtype: "string"
+              answer: "davfs2"
+            - pkg: "davfs2"
+              question: "davfs2/group_name"
+              vtype: "string"
+              answer: "davfs2"
+            - pkg: "davfs2"
+              question: "davfs2/new_user"
+              vtype: "boolean"
+              answer: true
+            - pkg: "davfs2"
+              question: "davfs2/new_group"
+              vtype: "boolean"
+              answer: true

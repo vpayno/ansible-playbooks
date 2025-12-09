@@ -47,22 +47,16 @@
       - zellij
       - zoxide
     crates_git:
-      - {
-          url: "https://github.com/astral-sh/uv",
-          binaries: "uv",
-          extra_flags: "",
-          failure_ok: true,
-        }
-      - {
-          url: "https://github.com/oxalica/nil",
-          binaries: "nil",
-          extra_flags: "",
-        }
-      - {
-          url: "https://github.com/tealdeer-rs/tealdeer",
-          binaries: "tealdeer",
-          extra_flags: "",
-        }
+      - url: "https://github.com/astral-sh/uv"
+        binaries: "uv"
+        extra_flags: ""
+        failure_ok: true
+      - url: "https://github.com/oxalica/nil"
+        binaries: "nil"
+        extra_flags: ""
+      - url: "https://github.com/tealdeer-rs/tealdeer"
+        binaries: "tealdeer"
+        extra_flags: ""
   tags:
     - packages
     - raspberrypi
