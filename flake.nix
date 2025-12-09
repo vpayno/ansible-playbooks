@@ -99,6 +99,8 @@
 
                nix run .#usage
 
+               nix run .#update-host profileName
+
                nix run .#ci-actionlit
                nix run .#ci-check
                nix run .#ci-format
@@ -120,6 +122,69 @@
 
               text = ''
                 printf "%s" "${data.usageMessage}"
+              '';
+            };
+
+            update-host = pkgs.writeShellApplication {
+              name = "nixos-rebuild-host";
+              runtimeInputs =
+                with pkgs;
+                [
+                  coreutils
+                  flock
+                  jq
+                  moreutils
+                  openssh
+                  rsync
+                ]
+                ++ [
+                  inputs'.system-manager.packages.default
+                  inputs'.home-manager.packages.default
+                ];
+              text = ''
+                declare target="''${1:-}"
+                declare profile="''${2:-raspianServer}"
+                declare builder="''${3:-build1}"
+
+                declare lock_file="/tmp/.sysmgr-update-host.lock";
+
+                printf "\n"
+                printf "Testing connection to build server: %s\n" "''${builder}"
+                printf "\n"
+                # shellcheck disable=SC2029
+                ssh -t "''${builder}" echo "connected to ''${builder} server from $HOSTNAME"
+                printf "\n"
+                if [[ "''${target}" != "''${builder}" ]]; then
+                  # shellcheck disable=SC2029
+                  ssh -t "''${target}" ssh "''${builder}" echo "connected to ''${builder} server from \$HOSTNAME"
+                  printf "\n"
+                fi
+
+                echo Running: flock --exclusive --verbose "$lock_file" system-manager --target-host root@"''${target}" switch --flake .#systemConfigs.aarch64-linux."''${profile}"
+                printf "\n"
+                time flock --exclusive --verbose "$lock_file" system-manager --target-host root@"''${target}" switch --flake .#systemConfigs.aarch64-linux."''${profile}"
+                printf "\n"
+
+                # shellcheck disable=SC2016,SC2028
+                echo Running: ssh "''${target}" "/run/system-manager/sw/bin/nvd diff \$(find /nix/var/nix/profiles/system-manager-profiles/ -type l -regextype posix-extended -regex '^.*/system-manager-[0-9]+-link$' | sort -V | tail -n 2 | tr '\n' ' ')"
+                # shellcheck disable=SC2046
+                time ssh "''${target}" "/run/system-manager/sw/bin/nvd diff \$(find /nix/var/nix/profiles/system-manager-profiles/ -type l -regextype posix-extended -regex '^.*/system-manager-[0-9]+-link$' | sort -V | tail -n 2 | tr '\n' ' ')"
+                printf "\n"
+
+                echo Running: rsync --delete --progress --archive --hard-links --sparse --chown="''${USER}:''${USER}" --exclude={.venv,.devbox,node_modules,result*} ~/git_"''${USER}"/ansible-playbooks/ "''${USER}"@"''${target}":.config/home-manager/
+                time rsync --delete --progress --archive --hard-links --sparse --chown="''${USER}:''${USER}" --exclude={.venv,.devbox,node_modules,result*} ~/git_"''${USER}"/ansible-playbooks/ "''${USER}"@"''${target}":.config/home-manager/
+                printf "\n"
+
+                echo Running: flock --exclusive --verbose "$lock_file" ssh "''${target}" "home-manager switch -b before-home-manager --flake ~''${USER}/.config/home-manager#''${USER}"
+                printf "\n"
+                time flock --exclusive --verbose "$lock_file" ssh "''${target}" "home-manager switch -b before-home-manager --flake ~''${USER}/.config/home-manager#''${USER}"
+                printf "\n"
+
+                # shellcheck disable=SC2016,SC2028
+                echo Running: ssh "''${target}" "nvd diff \$(home-manager generations | head -n 2 | sed -r -e 's;^[0-9]+-[0-9]+-[0-9]+ [0-9]+:[0-9]+ : id [0-9]+ -> (/nix/store/[a-z0-9]+-home-manager-generation).*$;\1;g' | tac)"
+                # shellcheck disable=SC2046
+                time ssh "''${target}" "nvd diff \$(home-manager generations | head -n 2 | sed -r -e 's;^[0-9]+-[0-9]+-[0-9]+ [0-9]+:[0-9]+ : id [0-9]+ -> (/nix/store/[a-z0-9]+-home-manager-generation).*$;\1;g' | tac)"
+                printf "\n"
               '';
             };
 
@@ -235,6 +300,15 @@
                 inherit version;
                 name = "${pname}-${version}";
                 mainProgram = "showUsage";
+              };
+            };
+
+            update-host = {
+              type = "app";
+              program = "${pkgs.lib.getExe scripts.update-host}";
+              meta = {
+                description = "nixos-rebuild wrapper for updating hosts";
+                name = "update-host-${version}";
               };
             };
 
