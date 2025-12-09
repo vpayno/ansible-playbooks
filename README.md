@@ -305,34 +305,28 @@ Benefits over dev containers?
 
 ### Running CI commands
 
-To run `ansible-lint` to lint the ansible files:
-
-```bash { name=ci-01-ansible-lint }
-devbox run test
-```
-
 To run `actionlint` to check the GitHub workflow files:
 
-```bash { name=ci-02-action-lint }
-devbox run actionlint
+```bash { name=ci-action-lint }
+nix run .#ci-actionlint
 ```
 
-To run `yamlfix` to format yaml files:
+To run `ansible-lint` to lint the ansible files:
 
-```bash { name=ci-03-format-yaml }
-devbox run format
-```
-
-To run `misspell` to spellcheck files:
-
-```bash { name=ci-04-spellcheck }
-devbox run spellcheck
+```bash { name=ci-ansible-lint }
+nix run .#ci-ansiblelint
 ```
 
 To run `markdownlint` to lint markdown files:
 
-```bash { name=ci-05-md-lint }
-devbox run mdlint
+```bash { name=ci-markdownlint }
+nix run .#ci-markdownlint
+```
+
+To run `yamllint` to lint yaml files:
+
+```bash { name=ci-yamllint }
+nix run .#ci-yamllint
 ```
 
 ## Ansible
