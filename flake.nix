@@ -115,7 +115,7 @@
             yamlintConfig = ./.yamllint.yaml;
           };
 
-          scripts = {
+          scripts = rec {
             showUsage = pkgs.writeShellApplication {
               name = "showUsage";
 
@@ -207,14 +207,22 @@
             ci-check = pkgs.writeShellApplication {
               name = "ci-check";
 
-              runtimeInputs = with pkgs; [
-                ansible-lint
+              runtimeInputs = [
+                ci-actionlint
+                ci-ansiblelint
+                ci-markdownlint
+                ci-yamllint
               ];
 
               text = ''
-                printf "Running ansible-lint...\n"
-                # ansible-lint wants "bad" yaml formatting, ignoring
-                ansible-lint --skip-list=formatting ./playbooks/ ./tasks/ ./templates/ ./files/ ./tools/
+                ci-actionlint
+                printf "\n"
+                ci-ansiblelint
+                printf "\n"
+                ci-markdownlint
+                printf "\n"
+                ci-yamllint
+                printf "\n"
               '';
             };
 
