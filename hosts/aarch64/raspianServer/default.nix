@@ -12,6 +12,7 @@ in
     ../../common/nix-client.nix
     ../../common/shell.nix
     ../../common/system.nix
+    ../../common/users.nix
 
     ../../common/services-docker.nix
   ];

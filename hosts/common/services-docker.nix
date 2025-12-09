@@ -20,11 +20,11 @@ let
         shadow
       ];
       text = ''
-        declare -i account_uid=${builtins.toString config.users.users.docker.uid}
-        declare -i account_gid=${builtins.toString config.users.groups.docker.gid}
+        declare -i account_uid=${builtins.toString config.users.users.docker.content.uid}
+        declare -i account_gid=${builtins.toString config.users.groups.docker.content.gid}
 
-        declare service_name="${config.users.users.docker.name}";
-        declare service_home="${config.users.users.docker.home}";
+        declare service_name="${config.users.users.docker.content.name}";
+        declare service_home="${config.users.users.docker.content.home}";
 
         if ! getent group "''${service_name}" >&/dev/null; then
           printf "Creating %s service group...\n" "''${service_name}"
@@ -63,11 +63,13 @@ in
       ];
 
       etc = {
-        nix-system = {
+        "docker/daemon.json" = {
           text = ''
-            ${args.system}
+            {
+              "storage-driver": "zfs",
+              "storage-opts": []
+            }
           '';
-          target = "nix-system";
           mode = "0644";
           user = "root";
           group = "root";
@@ -105,27 +107,6 @@ in
           name = "docker.socket";
           enable = true;
           text = builtins.readFile "${pkgs.docker}/etc/systemd/system/docker.socket";
-        };
-      };
-    };
-
-    # noop under system-manager, leaving it here for reference via config
-    # using docker-setup.service to create the system account and group
-    users = {
-      users = {
-        docker = {
-          name = "docker";
-          enable = true;
-          uid = 900;
-          isSystemUser = true;
-          home = "/var/lib/docker";
-          group = "docker";
-        };
-      };
-      groups = {
-        docker = {
-          name = "docker";
-          gid = 900;
         };
       };
     };
