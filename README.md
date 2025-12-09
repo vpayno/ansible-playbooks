@@ -335,8 +335,10 @@ The Ansible notes are located in the file [ANSIBLE.md](./ANSIBLE.md).
 
 To run ansible playbooks run:
 
-```bash
-devbox run ansible-playbook playbooks/main.yaml --limit=host
+```bash { name=ansible-playbook-run }
+export FQDN="rpi12"
+
+ansible-playbook playbooks/main.yaml --limit="${FQDN}"
 ```
 
 ## Notes
