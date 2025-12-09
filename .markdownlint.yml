@@ -1,4 +1,6 @@
 ---
+# MD041/first-line-heading/first-line-h1
+MD041: false
 # MD013/line-length Line length, Expected: 80
 MD013: false
 # MD033/no-inline-html Inline HTML, true

@@ -105,7 +105,8 @@
                nix run .#ci-check
                nix run .#ci-format
                nix run .#ci-ansiblelint
-               nix run .#ci-lint
+               nix run .#ci-markdownlint
+               nix run .#ci-yamllint
             '';
 
             gitignoreConfig = ./.gitignore;
@@ -243,19 +244,28 @@
               '';
             };
 
-            ci-lint = pkgs.writeShellApplication {
-              name = "ci-lint";
+            ci-markdownlint = pkgs.writeShellApplication {
+              name = "ci-markdownlint";
 
               runtimeInputs = with pkgs; [
                 markdownlint-cli
-                yamllint
               ];
 
               text = ''
                 printf "Linting Markdown files...\n"
                 markdownlint --ignore-path ${data.gitignoreConfig} .
                 printf "\n"
+              '';
+            };
 
+            ci-yamllint = pkgs.writeShellApplication {
+              name = "ci-yamllint";
+
+              runtimeInputs = with pkgs; [
+                yamllint
+              ];
+
+              text = ''
                 printf "Linting Yaml files...\n"
                 yamllint --config-file ${data.yamlintConfig} ./.github/ ./playbooks/ ./tasks/ ./files/ ./tools/
                 printf "\n"
@@ -375,15 +385,27 @@
               };
             };
 
-            ci-lint = {
+            ci-markdownlint = {
               type = "app";
-              program = "${pkgs.lib.getExe scripts.ci-lint}";
+              program = "${pkgs.lib.getExe scripts.ci-markdownlint}";
               meta = metadata // {
-                description = "Yaml and Markdown formatter";
-                pname = "ci-lint";
+                description = "CI Markdown Linter";
+                pname = "ci-markdownlint";
                 inherit version;
                 name = "${pname}-${version}";
-                mainProgram = "ci-lint";
+                mainProgram = "ci-markdownlint";
+              };
+            };
+
+            ci-yamllint = {
+              type = "app";
+              program = "${pkgs.lib.getExe scripts.ci-yamllint}";
+              meta = metadata // {
+                description = "CI Yaml Linter";
+                pname = "ci-yamllint";
+                inherit version;
+                name = "${pname}-${version}";
+                mainProgram = "ci-yamllint";
               };
             };
 
