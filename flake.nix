@@ -101,9 +101,10 @@
 
                nix run .#update-host profileName
 
-               nix run .#ci-actionlint
                nix run .#ci-check
                nix run .#ci-format
+
+               nix run .#ci-actionlint
                nix run .#ci-ansiblelint
                nix run .#ci-markdownlint
                nix run .#ci-yamllint
@@ -198,7 +199,7 @@
               ];
 
               text = ''
-                printf "Running %s...\n"
+                printf "Running ci-actionlint...\n"
                 actionlint ./.github/workflows/*yaml
               '';
             };
