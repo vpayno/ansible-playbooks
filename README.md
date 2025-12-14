@@ -23,7 +23,7 @@ to manage "User" configurations.
 
 Show the system-manager and home-manager latest profile diffs.
 
-```bash { name=nix-nvd-diff-latest terminalRows=80 }
+```bash { name=nix-nvd-diff-latest terminalrows=25 terminalcolumns=80 }
 declare target_host=rpi11
 
 echo Running: \ssh "${target_host}" '/run/system-manager/sw/bin/nvd diff $(find /nix/var/nix/profiles/system-manager-profiles/ -type l -regextype posix-extended -regex '^.*/system-manager-[0-9]+-link$' | sort -V | tail -n 2 | tr "\n" " ")'
@@ -36,7 +36,7 @@ time \ssh "${target_host}" "nvd diff \$(home-manager generations | head -n 2 | s
 
 Update both system-manager and home-manager on remote host.
 
-```bash { name=nix-sm-hm-update-push-repo-and-update terminalRows=80 }
+```bash { name=nix-sm-hm-update-push-repo-and-update terminalrows=25 terminalcolumns=80 }
 declare target_host=rpi11
 
 echo Running: \rsync --delete --progress --archive --hard-links --sparse --chown=root:root --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ root@"${target_host}":.config/system-manager/
@@ -72,7 +72,7 @@ fi
 
 Sync system-manager repo to remote host.
 
-```bash { name=nix-sm-update-push-repo terminalRows=80 }
+```bash { name=nix-sm-update-push-repo terminalrows=25 terminalcolumns=80 }
 declare target_host=rpi11
 
 echo Running: \rsync --delete --progress --archive --hard-links --sparse --chown=root:root --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ root@"${target_host}":.config/system-manager/
@@ -82,7 +82,7 @@ printf "\n"
 
 Sync repo and run system-manager on remote host.
 
-```bash { name=nix-sm-update-push-repo-and-update terminalRows=80 }
+```bash { name=nix-sm-update-push-repo-and-update terminalrows=25 terminalcolumns=80 }
 declare target_host=rpi11
 
 echo Running: \rsync --delete --progress --archive --hard-links --sparse --chown=root:root --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ root@"${target_host}":.config/system-manager/
@@ -101,7 +101,7 @@ else
 fi
 ```
 
-```bash { name=nix-sm-update-from-local-to-remote terminalRows=80 }
+```bash { name=nix-sm-update-from-local-to-remote terminalrows=25 terminalcolumns=80 }
 declare target_host=rpi11
 
 echo Running: system-manager --target-host "root@${target_host}" switch --flake .#systemConfigs.aarch64-linux.raspianServer
@@ -121,7 +121,7 @@ Using github.com as the repo source:
 - To specify a tag, use `?ref=refs/tags/yyyymmdd.serial.patch#raspianServer`.
 - To specify a branch, use `?ref=refs/heads/BRANCH_NAME#raspianServer`.
 
-```bash { name=nix-sm-update-from-github terminalRows=80 }
+```bash { name=nix-sm-update-from-github terminalrows=25 terminalcolumns=80 }
 declare target_host=rpi11
 
 echo Running: system-manager --target-host "root@${target_host}" switch --flake github.com:vpayno/ansible-playbooks#systemConfigs.aarch64-linux.raspianServer
@@ -140,7 +140,7 @@ fi
 
 Push home-manager repo to remote host.
 
-```bash { name=nix-hm-update-push-repo terminalRows=80 }
+```bash { name=nix-hm-update-push-repo terminalrows=25 terminalcolumns=80 }
 declare target_host=rpi11
 
 echo Running: \rsync --delete --progress --archive --hard-links --sparse --chown=vpayno:vpayno --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ vpayno@"${target_host}":.config/home-manager/
@@ -150,7 +150,7 @@ printf "\n"
 
 Push repo to remote host and update home-manager configuration from remote host.
 
-```bash { name=nix-hm-update-push-repo-and-update terminalRows=80 }
+```bash { name=nix-hm-update-push-repo-and-update terminalrows=25 terminalcolumns=80 }
 declare target_host=rpi11
 
 echo Running: \rsync --delete --progress --archive --hard-links --sparse --chown=vpayno:vpayno --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ vpayno@"${target_host}":.config/home-manager/
@@ -174,7 +174,7 @@ Using github.com as the repo source:
 - To specify a tag, use `?ref=refs/tags/yyyymmdd.serial.patch#vpayno`.
 - To specify a branch, use `?ref=refs/heads/BRANCH_NAME#vpayno`.
 
-```bash { name=nix-hm-update-from-github terminalRows=80 }
+```bash { name=nix-hm-update-from-github terminalrows=25 terminalcolumns=80 }
 declare target_host=rpi11
 
 echo Running: \ssh "vpayno@${target_host}" "home-manager -b before-home-manager switch --flake github.com:vpayno/ansible-playbooks#vpayno"
@@ -195,7 +195,7 @@ The `system` value has to match on both hosts if you use the shortcut
 `.#raspianServer`. To target a different architecture, specify the full path:
 `systemConfigs.aarch64-linux.raspianServer`.
 
-```bash { name=nix-sm-hm-update-rpi terminalRows=80 }
+```bash { name=nix-sm-hm-update-rpi terminalrows=25 terminalcolumns=80 }
 export target_host=rpi11
 
 echo Running: \rsync --delete --progress --archive --hard-links --sparse --chown=root:root --exclude={.venv,.devbox,node_modules,result*} ~/git_vpayno/ansible-playbooks/ root@"${target_host}":.config/system-manager/
@@ -237,7 +237,7 @@ Use this playbook step/task to update the [RunMe](https://runme.dev) CLI.
 
 If you don't have RunMe installed, you'll need to copy/paste the command. :)
 
-```bash { background=false category=runme closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=setup-runme-install promptEnv=true terminalRows=80 }
+```bash { background=false category=runme closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=setup-runme-install promptEnv=true terminalrows=25 terminalcolumns=80 }
 go install github.com/stateful/runme/v3@v3
 ```
 
@@ -246,7 +246,7 @@ You can also install `runme` with the command `devbox add runme` and run it with
 
 ### Setup command auto-completion
 
-```bash { background=false category=runme closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=setup-runme-autocompletion promptEnv=true terminalRows=80 }
+```bash { background=false category=runme closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=setup-runme-autocompletion promptEnv=true terminalrows=25 terminalcolumns=80 }
 if [[ -d ~/.bash_libs.d ]]; then
     runme completion bash > ~/.bash_libs.d/19.00-completion-runme.sh
     printf "Don't forget to run: %s\n" "source ~/.bash_libs.d/19.00-completion-runme.sh"
@@ -259,7 +259,7 @@ fi
 
 ### Install Playbook dependencies
 
-```bash { background=false category=runme closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=setup-runme-deps promptEnv=true terminalRows=80 }
+```bash { background=false category=runme closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=setup-runme-deps promptEnv=true terminalrows=25 terminalcolumns=80 }
 go install github.com/keewek/ansible-pretty-print@latest
 go install github.com/charmbracelet/gum@latest
 go install github.com/mikefarah/yq/v4@latest
@@ -301,25 +301,25 @@ Benefits over dev containers?
 
 To run `actionlint` to check the GitHub workflow files:
 
-```bash { name=ci-action-lint terminalRows=80 }
+```bash { name=ci-action-lint terminalrows=25 terminalcolumns=80 }
 nix run .#ci-actionlint
 ```
 
 To run `ansible-lint` to lint the ansible files:
 
-```bash { name=ci-ansible-lint terminalRows=80 }
+```bash { name=ci-ansible-lint terminalrows=25 terminalcolumns=80 }
 nix run .#ci-ansiblelint
 ```
 
 To run `markdownlint` to lint markdown files:
 
-```bash { name=ci-markdownlint terminalRows=80 }
+```bash { name=ci-markdownlint terminalrows=25 terminalcolumns=80 }
 nix run .#ci-markdownlint
 ```
 
 To run `yamllint` to lint yaml files:
 
-```bash { name=ci-yamllint terminalRows=80 }
+```bash { name=ci-yamllint terminalrows=25 terminalcolumns=80 }
 nix run .#ci-yamllint
 ```
 
@@ -342,7 +342,7 @@ ansible-playbook playbooks/main.yaml --limit="${FQDN}"
 After cloning a `systemd` host, you need to run the following commands on the
 clone to fix the duplicate ipv6 address collision issue:
 
-```bash { name=fix-systemd-ipv6-collision terminalRows=80 }
+```bash { name=fix-systemd-ipv6-collision terminalrows=25 terminalcolumns=80 }
 cat /etc/machine-id
 rm -fv /etc/machine-id
 systemd-machine-id-setup  # generates random number
