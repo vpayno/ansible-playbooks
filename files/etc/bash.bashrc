@@ -10,7 +10,7 @@ if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
 fi
 PATH="/run/system-manager/sw/bin:${PATH}"
 # End Nix
-#
+
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
