@@ -3,7 +3,7 @@
 set -e
 set -o pipefail
 
-declare -a key_files
+declare -a key_files=()
 declare -a key_data
 declare -a hosts=("${@}")
 
@@ -16,7 +16,7 @@ if [[ ${#hosts[@]} -eq 0 ]]; then
 fi
 
 # select public ssh keys to push to a server
-while [[ ${#key_files[@]} -eq 0 ]]; do
+while [[ -z ${key_files[*]} ]]; do
 	mapfile -t key_files < <(gum choose --header="# Please select one or more SSH Public Keys to add to the server(s) authorized_keys file:" --ordered --no-limit --select-if-one "abort/cancel" ~/.ssh/id_*pub)
 
 	if [[ ${key_files[0]} == "abort/cancel" ]]; then
